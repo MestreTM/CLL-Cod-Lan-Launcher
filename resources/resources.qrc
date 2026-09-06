@@ -6,6 +6,7 @@
         <file>i18n/es.json</file>
         <file>i18n/ru.json</file>
         <file>icons/app.svg</file>
+        <file>icons/icon.ico</file>
         <file>icons/main.svg</file>
         <file>icons/mods.svg</file>
         <file>icons/server.svg</file>

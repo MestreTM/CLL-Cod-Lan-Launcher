@@ -87,6 +87,12 @@ endif()
 
 if (WIN32)
     set_target_properties(LanLauncherQt PROPERTIES WIN32_EXECUTABLE TRUE)
+    set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/icon.ico")
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.rc.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/app.rc"
+        @ONLY)
+    target_sources(LanLauncherQt PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/app.rc")
 endif()
 
 if (MINGW)
