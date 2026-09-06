@@ -1,0 +1,9 @@
+build/
+build-static/
+build-release/
+dist/
+dist-static/
+CMakeLists.txt.user
+*.user
+.qtc_clangd/
+CMakeCache.txt

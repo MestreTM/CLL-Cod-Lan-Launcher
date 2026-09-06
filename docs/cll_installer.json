@@ -1,0 +1,24 @@
+{
+  "name": "Zombies Declassified Beta 1",
+  "version": "1.0",
+  "author": "Logo2k",
+  "description": "A pc port of the cancelled DLC5 Expansion",
+  "game": "t6",
+  "folders": [
+    {
+      "from": "ZombiesDeclassified_BETA1/storage",
+      "to": "pu_folder",
+      "dest": "storage"
+    },
+    {
+      "from": "ZombiesDeclassified_BETA1/steam/sound",
+      "to": "game_folder",
+      "dest": "sound"
+    },
+    {
+      "from": "ZombiesDeclassified_BETA1/steam/zone",
+      "to": "game_folder",
+      "dest": "zone"
+    }
+  ]
+}

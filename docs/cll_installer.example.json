@@ -1,0 +1,11 @@
+{
+  "name": "Example T6 pack",
+  "version": "1.0.0",
+  "author": "YourName",
+  "description": "Sample CLL pack. Rename the zip to .cll if you want the dedicated extension.",
+  "game": "t6",
+  "folders": [
+    { "from": "storage/t6/mods/example", "to": "pu_folder" },
+    { "from": "usermaps", "to": "game_folder", "dest": "usermaps" }
+  ]
+}
