@@ -8,6 +8,10 @@ Offline launcher to play **Call of Duty** via [Plutonium](https://plutonium.pw/)
 ![Español](https://img.shields.io/badge/lang-Espa%C3%B1ol-yellow)
 ![Русский](https://img.shields.io/badge/lang-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-red)
 
+## [>> Download in Releases <<](https://github.com/MestreTM/CLL-Cod-Lan-Launcher/releases)
+
+---
+
 ![Cod Lan Launcher](https://i.imgur.com/xHyfkQH.png)
 
 Made by **MestreTM**. The original idea comes from LanLauncher by [JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher).
