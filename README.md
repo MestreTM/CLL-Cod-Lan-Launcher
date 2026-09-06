@@ -1,100 +1,107 @@
 # Cod Lan Launcher (CLL)
 
-Launcher offline para jogar **Call of Duty** via [Plutonium](https://plutonium.pw/) em LAN, sem depender de login ou do client oficial estar aberto.
+Supported Langs:
 
-Feito por **MestreTM**. A ideia original vem do LanLauncher do [JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher).
+![English](https://img.shields.io/badge/lang-English-blue)
+![Portugu%C3%AAs](https://img.shields.io/badge/lang-Portugu%C3%AAs-green)
+![Espa%C3%B1ol](https://img.shields.io/badge/lang-Espa%C3%B1ol-yellow)
+![%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9](https://img.shields.io/badge/lang-%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-red)
 
-Cerca de **40% deste codigo foi vibecoded** — escrito com auxilio de IA e depois revisado, testado e ajustado na unha.
+Offline launcher to play **Call of Duty** via [Plutonium](https://plutonium.pw/) on LAN, without needing to log in or have the official client open.
 
-O codigo e aberto. O `.exe` pronto fica nas [Releases](../../releases), nao neste repositorio.
+Made by **MestreTM**. The original idea comes from LanLauncher by [JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher).
 
-## Jogos
+About **40% of this code was vibecoded** — written with AI assistance and then reviewed, tested, and fine-tuned by hand.
 
-| Codigo | Jogo |
+The code is open source. The ready-to-use `.exe` is available in the [Releases](../../releases), not in this repository.
+
+## Games
+
+| Code | Game |
 | --- | --- |
 | T4 | Call of Duty: World at War |
 | T5 | Call of Duty: Black Ops |
 | T6 | Call of Duty: Black Ops II |
 | IW5 | Call of Duty: Modern Warfare 3 |
 
-## O que o programa faz
+## What the program does
 
-- Assistente na primeira abertura: idioma, Plutonium Portable ou instalacao ja existente, nickname e pastas dos jogos
-- Deteccao automatica do Steam (registro + `libraryfolders.vdf`) e pastas comuns
-- Lancar multiplayer ou zombies/solo, com botao de encerrar o processo
-- Kit **Plutonium Portable** (`pu.dat`) baixado e extraido em `./pu`, sem precisar da instalacao oficial
-- Tambem aceita o Plutonium que ja estiver em `%LOCALAPPDATA%\Plutonium`
-- Mods e mapas: zip / rar / 7z / exe, inclusive pacotes mistos (`storage/` + `steam/`)
-- Checkpoint do mod: desinstalar devolve os arquivos originais e apaga o backup
-- Servidor LAN (beta): sobe e para o dedicated, edita configs, lista IPs da maquina (incluindo `127.0.0.1`) e mostra como conectar no jogo
-- Quatro idiomas: English (padrao), Portugues, Espanol, Russkiy
-- Um unico `LanLauncherQt.exe` — artes, icones, tema e traducoes vao embutidos
+- First-launch wizard: language, Plutonium Portable or existing installation, nickname, and game folders
+- Automatic Steam detection (registry + `libraryfolders.vdf`) and common folders
+- Launch multiplayer or zombies/solo, with a button to kill the process
+- **Plutonium Portable** kit (`pu.dat`) downloaded and extracted into `./pu`, no official installation required
+- Also accepts an existing Plutonium install found in `%LOCALAPPDATA%\Plutonium`
+- Mods and maps: zip / rar / 7z / exe, including mixed packages (`storage/` + `steam/`)
+- Mod checkpoint: uninstalling restores the original files and deletes the backup
+- LAN server (beta): starts and stops the dedicated server, edits configs, lists the machine's IPs (including `127.0.0.1`), and shows how to connect in-game
+- Four languages: English (default), Portuguese, Spanish, Russian
+- A single `LanLauncherQt.exe` — art, icons, theme, and translations are all embedded
 
-## Como usar
+## How to use
 
-1. Baixe o executavel na pagina de **Releases**
-2. Coloque o `.exe` numa pasta gravavel
-3. Na primeira abertura escolha o idioma e o client (Portable ou o Plutonium ja instalado)
-4. Marque os jogos que voce tem
-5. Clique em **Start** / **Iniciar**
+1. Download the executable from the **Releases** page
+2. Put the `.exe` in a writable folder
+3. On first launch, choose the language and client (Portable or an already installed Plutonium)
+4. Check the games you own
+5. Click **Start**
 
-Para conectar num servidor LAN: no jogo aperte `` ` `` (abaixo do Esc) e digite `connect IP:porta`.
+To connect to a LAN server: in-game, press `` ` `` (below Esc) and type `connect IP:port`.
 
-## Compilar
+## Building
 
-Precisa de Qt 6 (Widgets, Network, Concurrent, Svg) e CMake 3.16+.
+Requires Qt 6 (Widgets, Network, Concurrent, Svg) and CMake 3.16+.
 
-Build estatico no Windows, com o prefixo em `Y:\QT\6.11.2-static`:
+Static build on Windows, with the prefix at `Y:\QT\6.11.2-static`:
 
 ```bat
 scripts\build-app.bat
 ```
 
-O resultado fica em `dist-static\LanLauncherQt.exe`.
+The result is placed in `dist-static\LanLauncherQt.exe`.
 
-Build dinamico:
+Dynamic build:
 
 ```bat
 cmake -S . -B build -DCMAKE_PREFIX_PATH=C:\Qt\6.11.2\mingw_64
 cmake --build build --config Release
 ```
 
-## Traducoes
+## Translations
 
-Os JSON em `resources/i18n/` entram no executavel pelo `resources.qrc`.
+The JSON files in `resources/i18n/` are embedded in the executable via `resources.qrc`.
 
-- A chave e o texto em portugues do `tr()` no C++
-- `en.json`, `es.json`, `ru.json` traduzem
-- `pt_BR.json` so acerta acentuacao
+- The key is the Portuguese text from `tr()` in the C++ code
+- `en.json`, `es.json`, `ru.json` translate it
+- `pt_BR.json` only fixes accentuation
 
-Para outro idioma: copie `en.json`, traduza os valores, liste o arquivo no `.qrc` e registre o codigo em `I18n::codes()`.
+To add another language: copy `en.json`, translate the values, list the file in the `.qrc`, and register the code in `I18n::codes()`.
 
-## Empacotar o kit Portable
+## Packaging the Portable kit
 
-`pack_pu.py` gera o `pu.dat` (nao vai no binario do launcher):
+`pack_pu.py` generates `pu.dat` (not included in the launcher binary):
 
 ```bat
 python pack_pu.py
 ```
 
-Formato: magic `LLQTPKG1` + tamanho + 7z com XOR.
+Format: magic `LLQTPKG1` + size + 7z with XOR.
 
-## Estrutura
+## Structure
 
 ```
-src/                 codigo
-src/pages/           telas (jogar, mods, servidor, ajustes, sobre)
-resources/           icones, artes, tema, idiomas
-scripts/             build estatico
-pack_pu.py           gera pu.dat
+src/                 code
+src/pages/           screens (play, mods, server, settings, about)
+resources/           icons, art, theme, languages
+scripts/             static build
+pack_pu.py           generates pu.dat
 ```
 
-## Creditos
+## Credits
 
-- **MestreTM** — este launcher
-- **[JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher)** — LanLauncher original em Python
-- **Plutonium** e **Call of Duty** pertencem aos respectivos donos. Este projeto nao e afiliado a eles.
+- **MestreTM** — this launcher
+- **[JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher)** — original LanLauncher in Python
+- **Plutonium** and **Call of Duty** belong to their respective owners. This project is not affiliated with them.
 
-## Licenca
+## License
 
-LGPL-3.0. Veja [LICENSE](LICENSE).
+LGPL-3.0. See [LICENSE](LICENSE).
