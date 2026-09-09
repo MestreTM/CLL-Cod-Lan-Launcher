@@ -12,7 +12,7 @@ Offline launcher to play **Call of Duty** via [Plutonium](https://plutonium.pw/)
 
 ---
 
-![Cod Lan Launcher](https://i.imgur.com/xHyfkQH.png)
+![image](https://i.imgur.com/4e0GkZ3.png)
 
 Made by **MestreTM**. The original idea comes from LanLauncher by [JugAndDoubleTap](https://github.com/JugAndDoubleTap/LanLauncher).
 
