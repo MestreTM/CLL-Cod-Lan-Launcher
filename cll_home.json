@@ -1,0 +1,83 @@
+{
+    "featured": [
+    ],
+    "games": [
+        {
+            "art": "https://cdn.cloudflare.steamstatic.com/steam/apps/202970/library_hero.jpg",
+            "code": "T6",
+            "icon": "https://cdn.cloudflare.steamstatic.com/steam/apps/202970/capsule_231x87.jpg",
+            "id": "t6",
+            "logo": "https://cdn.cloudflare.steamstatic.com/steam/apps/202970/logo.png",
+            "name": "Black Ops II",
+            "year": 2012
+        },
+        {
+            "art": "https://cdn.cloudflare.steamstatic.com/steam/apps/42700/library_hero.jpg",
+            "code": "T5",
+            "icon": "https://cdn.cloudflare.steamstatic.com/steam/apps/42700/capsule_231x87.jpg",
+            "id": "t5",
+            "logo": "https://cdn.cloudflare.steamstatic.com/steam/apps/42700/logo.png",
+            "name": "Black Ops",
+            "year": 2010
+        },
+        {
+            "art": "https://cdn.cloudflare.steamstatic.com/steam/apps/10090/library_hero.jpg",
+            "code": "T4",
+            "icon": "https://cdn.cloudflare.steamstatic.com/steam/apps/10090/capsule_231x87.jpg",
+            "id": "t4",
+            "logo": "https://cdn.cloudflare.steamstatic.com/steam/apps/10090/logo.png",
+            "name": "World at War",
+            "year": 2008
+        },
+        {
+            "art": "https://cdn.cloudflare.steamstatic.com/steam/apps/42690/library_hero.jpg",
+            "code": "IW5",
+            "icon": "https://cdn.cloudflare.steamstatic.com/steam/apps/42690/capsule_231x87.jpg",
+            "id": "iw5",
+            "logo": "https://cdn.cloudflare.steamstatic.com/steam/apps/42690/logo.png",
+            "name": "Modern Warfare 3",
+            "year": 2011
+        }
+    ],
+    "mods": [
+        {
+            "author": "HD ERICK GAMES",
+            "description": "",
+            "game": "t6",
+            "id": "t6-octagonal-ascension-bo2-remake",
+            "image": "https://i.imgur.com/Y0deAOH.jpeg",
+            "kind": "github",
+            "name": "Octagonal Ascension BO2 REMAKE",
+            "size": "154 MB",
+            "summary": "",
+            "tags": [
+                "Zombies",
+                "GitHub",
+                "v1.2"
+            ],
+            "url": "https://github.com/cll-mods/Octagonal-Ascension/",
+            "version": "1.2"
+        },
+        {
+            "author": "Logo2K",
+            "description": "A PC port of the cancelled DLC5 expansion.",
+            "game": "t6",
+            "id": "t6-zombies-declassified-beta-2",
+            "image": "https://i.ytimg.com/vi/8Tt5d6tu-7Y/maxresdefault.jpg",
+            "kind": "github",
+            "name": "Zombies Declassified BETA 2",
+            "size": "9.0 GB",
+            "summary": "A PC port of the cancelled DLC5 expansion.",
+            "tags": [
+                "Zombies",
+                "GitHub",
+                "beta2"
+            ],
+            "url": "https://github.com/Logo-2K/zombies-declassified/",
+            "version": "2.0"
+        }
+    ],
+    "schema": 1,
+    "title": "Mods & Games",
+    "updated": "2026-09-09"
+}
