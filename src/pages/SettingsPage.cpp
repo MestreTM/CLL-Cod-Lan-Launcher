@@ -93,6 +93,21 @@ SettingsPage::SettingsPage(AppSettings &settings, QWidget *parent)
     langCard->setObjectName("cardLang");
     root->addWidget(langCard);
 
+    QVBoxLayout *homeBody = nullptr;
+    auto *homeCard = makeCard(inner, tr("INÍCIO"), tr("Página inicial"),
+                              tr("Desative para esconder o catálogo da barra lateral."),
+                              &homeBody);
+    m_homeEnabled = new QCheckBox(tr("Mostrar a aba Início"), homeCard);
+    m_homeEnabled->setChecked(m_settings.homeEnabled);
+    homeBody->addWidget(m_homeEnabled);
+    connect(m_homeEnabled, &QCheckBox::toggled, this, [this](bool on) {
+        m_settings.homeEnabled = on;
+        m_settings.saveToIni();
+        emit homeEnabledChanged(on);
+    });
+    homeCard->setObjectName("cardHome");
+    root->addWidget(homeCard);
+
     // ---- 2. Plutonium client (folder + portable kit on the same card) ----
     QVBoxLayout *puBody = nullptr;
     auto *pu = makeCard(inner, tr("CLIENT"), tr("Plutonium"),
@@ -235,6 +250,11 @@ void SettingsPage::pullFromSettings()
         if (i >= 0)
             m_langCombo->setCurrentIndex(i);
     }
+    if (m_homeEnabled) {
+        m_homeEnabled->blockSignals(true);
+        m_homeEnabled->setChecked(m_settings.homeEnabled);
+        m_homeEnabled->blockSignals(false);
+    }
     updateKitButton();
 }
 
@@ -251,6 +271,10 @@ void SettingsPage::retranslate()
     fill(findChild<QFrame*>("cardProfile"), tr("PERFIL"), tr("Seu nickname"), QString());
     fill(findChild<QFrame*>("cardLang"), tr("IDIOMA"), tr("Idioma do programa"),
          tr("Vale para o setup e para o launcher."));
+    fill(findChild<QFrame*>("cardHome"), tr("INÍCIO"), tr("Página inicial"),
+         tr("Desative para esconder o catálogo da barra lateral."));
+    if (m_homeEnabled)
+        m_homeEnabled->setText(tr("Mostrar a aba Início"));
     fill(findChild<QFrame*>("cardPu"), tr("CLIENT"), tr("Plutonium"),
          tr("Use o kit portatil em ./pu ou a instalacao oficial em AppData."));
     fill(findChild<QFrame*>("cardGames"), tr("JOGOS"), tr("Pastas de instalacao"),

@@ -3,6 +3,8 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFutureWatcher>
+#include "ModPreview.h"
+#include "GithubModInstaller.h"
 
 class QComboBox;
 class QListWidget;
@@ -10,7 +12,9 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QProgressBar;
+class QStackedWidget;
 class AppSettings;
+class HomePage;
 
 class ModsPage : public QWidget
 {
@@ -20,6 +24,7 @@ public:
     QString selectedMod() const;
     void refreshList();
     void selectGame(const QString &gameId);
+    void installFromCatalog(const QString &modId);
 
 private slots:
     void onGameSelected(const QString &gameName);
@@ -34,6 +39,7 @@ private:
     void installStandardOrSmart(const QString &archivePath);
     void handleModFile(const QString &path);
     bool tryCllInstall(const QString &path);
+    void tryGithubInstall(const QString &url);
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
@@ -50,7 +56,13 @@ private:
     QPushButton *m_deleteBtn = nullptr;
     QProgressBar *m_progress = nullptr;
     QLabel *m_progressLabel = nullptr;
-    enum class Job { None, Install, Remove };
+    enum class Job { None, Install, Remove, Peek };
+    QString m_pendingExtract;
+    QString m_pendingArchive;
+    ModPreview::Preview m_pendingPreview;
+    bool m_pendingGithub = false;
+    GithubModInstaller::Manifest m_pendingGhMan;
+    QList<GithubModInstaller::FailedDownload> m_lastGhFailed;
     Job m_job = Job::None;
 
     QFutureWatcher<QString> m_installWatcher; // empty = ok; otherwise an error string

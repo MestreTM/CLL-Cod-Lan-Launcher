@@ -5,7 +5,7 @@
 class AppSettings
 {
 public:
-    QString versionNum = "1.0.0";
+    QString versionNum = "1.1.0";
     QString theme      = "DarkAmber";
     QString username;
     QString plutoniumInstance;
@@ -15,6 +15,7 @@ public:
     QString mw3;
     bool setupCompleted = false;
     QString language = "en";
+    bool homeEnabled = true;
 
     QString modId;
     QString gameId;

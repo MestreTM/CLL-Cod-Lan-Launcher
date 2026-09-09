@@ -477,3 +477,72 @@ QLabel#DialogIcon { padding-right: 6px; }
 #WizardNum { font-size: 15pt; font-weight: 700; color: #b6acea; min-width: 34px; }
 #WizardCardTitle { font-weight: 600; }
 #WizardCardDesc { color: #8688a1; }
+/* ================= Home (catalogo de mods) =================
+   Cole este bloco no fim de resources/style/dark.qss.
+   Mesmos tokens do tema Nocturne ja usado no launcher. */
+
+#HomePage, #HomeContent { background: #161826; }
+
+#HomeBar {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #1b1d2e, stop:1 #161826);
+    border-bottom: 1px solid #22243a;
+}
+
+/* --- filtros por jogo --- */
+QPushButton#GameChip {
+    background: transparent;
+    border: 1px solid #2b2e42;
+    border-radius: 8px;
+    padding: 6px 13px;
+    color: #9a9dad;
+    font-size: 9pt;
+}
+QPushButton#GameChip:hover { background-color: #1c1e2e; color: #f4f4f7; }
+QPushButton#GameChip:checked {
+    background-color: rgba(145,132,217,0.16);
+    border: 1px solid #9184d9;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* --- slider de destaques --- */
+#HeroSlideTitle { color: #ffffff; font-size: 21pt; font-weight: 600; }
+#HeroSlideSummary { color: #d3d5df; font-size: 10.5pt; }
+#HeroSlideMeta { color: #9a9dad; font-size: 8.5pt; }
+
+QPushButton#HeroArrow {
+    background-color: rgba(35,37,50,0.85);
+    border: 1px solid #2b2e42;
+    border-radius: 19px;
+    color: #e9e9ed;
+    font-size: 15pt;
+    padding: 0;
+}
+QPushButton#HeroArrow:hover { background-color: rgba(145,132,217,0.28); border: 1px solid #9184d9; }
+QPushButton#HeroArrow:pressed { background-color: rgba(145,132,217,0.40); }
+
+QPushButton#HeroDot {
+    background-color: #3f424d;
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+}
+QPushButton#HeroDot:hover { background-color: #5b5f75; }
+QPushButton#HeroDot:checked { background-color: #9184d9; }
+
+/* --- secoes por jogo --- */
+#SectionTitle { color: #f4f4f7; font-size: 12pt; font-weight: 500; }
+
+/* --- card de mod --- */
+#ModCard {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #1e2032, stop:1 #191b29);
+    border: 1px solid #272a3e;
+    border-radius: 8px;
+}
+#ModCard:hover { border: 1px solid #4a4670; background-color: #212439; }
+
+#ModCardTitle { color: #f4f4f7; font-size: 10pt; font-weight: 600; }
+#ModCardMeta { color: #8688a1; font-size: 8.5pt; }
+#ModTags { color: #b6acea; font-size: 9pt; }

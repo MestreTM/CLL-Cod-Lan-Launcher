@@ -27,7 +27,7 @@ bool downloadToFile(const QString &url, const QString &destPath, QString &error,
     QNetworkAccessManager manager;
     QNetworkRequest request{QUrl(url)};
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("LanLauncherQt/1.0"));
+    request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("CodLanLaucher/1.1.0"));
 
     QNetworkReply *reply = manager.get(request);
 
@@ -62,6 +62,34 @@ bool downloadToFile(const QString &url, const QString &destPath, QString &error,
     }
     reply->deleteLater();
     return ok;
+}
+
+QByteArray downloadBytes(const QString &url, QString &error, int timeoutMs)
+{
+    QNetworkAccessManager manager;
+    QNetworkRequest request{QUrl(url)};
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("CodLanLaucher/1.1.0"));
+    QNetworkReply *reply = manager.get(request);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    QTimer timeoutTimer;
+    timeoutTimer.setSingleShot(true);
+    QObject::connect(&timeoutTimer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    timeoutTimer.start(timeoutMs > 0 ? timeoutMs : 60000);
+    loop.exec();
+
+    QByteArray data;
+    const bool ok = reply->error() == QNetworkReply::NoError && timeoutTimer.isActive();
+    if (ok)
+        data = reply->readAll();
+    else
+        error = reply->error() != QNetworkReply::NoError
+                    ? reply->errorString()
+                    : QObject::tr("Tempo esgotado ao baixar %1").arg(url);
+    reply->deleteLater();
+    return data;
 }
 
 } // namespace Downloader

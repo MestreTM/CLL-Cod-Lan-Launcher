@@ -3,7 +3,6 @@
 #include "MainWindow.h"
 
 #include <QApplication>
-#include <QIcon>
 #include <QCommandLineOption>
 #include <QCommandLineParser>
 #include <QDir>
@@ -61,9 +60,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Cod Lan Launcher");
-    QApplication::setApplicationVersion("1.0.0");
+    QApplication::setApplicationVersion("1.1.0");
     QApplication::setOrganizationName("MestreTM");
-    QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/icon.ico")));
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     QCommandLineParser parser;

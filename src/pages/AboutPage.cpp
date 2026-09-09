@@ -51,7 +51,7 @@ AboutPage::AboutPage(QWidget *parent)
     m_by->setWordWrap(true);
     root->addWidget(m_by, 0, Qt::AlignHCenter);
 
-    auto *ver = new QLabel(QStringLiteral("v1.0.0"), col);
+    auto *ver = new QLabel(QStringLiteral("v1.1.0"), col);
     ver->setObjectName("HeroSub");
     ver->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     root->addWidget(ver, 0, Qt::AlignHCenter);

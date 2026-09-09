@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
 #include <QStringList>
+#include <QList>
 
 // Mixed packs (e.g. Zombies Declassified):
 //   storage/t6/...  -> Plutonium folder
@@ -46,10 +47,29 @@ namespace SmartModInstaller
     QStringList checkpointIds(const QString &plutoniumRoot, const QString &gameStorageId);
     QString checkpointDisplayName(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId);
     QStringList checkpointOwnedModFolders(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId);
+    // Folder name for +set fs_game mods/<folder>. Empty if the pack has no mods/ slot.
+    QString resolveFsGameFolder(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId);
+    void cleanupEmptyAliasFolder(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId);
 
     // Restore replaced files, delete added ones, remove the checkpoint folder.
     QString rollback(const QString &plutoniumRoot,
                      const QString &gameRoot,
                      const QString &gameStorageId,
                      const QString &modId);
+
+    struct Mapping {
+        QString srcAbs;
+        QString destRootTag; // plutonium | game
+        QString destRel;
+        bool makeBackup = true;
+    };
+
+    QString applyMappings(const QList<Mapping> &maps,
+                          const QString &plutoniumRoot,
+                          const QString &gameRoot,
+                          const QString &gameStorageId,
+                          const QString &modId,
+                          const QString &displayName,
+                          const QString &archivePath,
+                          bool makeBackup);
 }

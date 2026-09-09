@@ -1,5 +1,7 @@
 #include "GameLauncher.h"
 #include "AppSettings.h"
+#include "SmartModInstaller.h"
+#include "Storage.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -74,7 +76,12 @@ Result launch(AppSettings &settings, const QString &modSelection)
             r.errorMsg = Dialogs::Msg::WrongGame;
             return r;
         }
-        args << "+set" << "fs_game" << ("mods/" + modSelection);
+        const QString sid = Storage::gameStorageId(settings.gameId);
+        SmartModInstaller::cleanupEmptyAliasFolder(settings.plutoniumInstance, sid, modSelection);
+        const QString folder = SmartModInstaller::resolveFsGameFolder(
+            settings.plutoniumInstance, sid, modSelection);
+        if (!folder.isEmpty())
+            args << "+set" << "fs_game" << ("mods/" + folder);
     }
 
     qint64 pid = 0;
@@ -138,7 +145,12 @@ Result launchServer(AppSettings &settings, const QString &modSelection,
             r.errorMsg = Dialogs::Msg::WrongGameServer;
             return r;
         }
-        args << "+set" << "fs_game" << ("mods/" + modSelection);
+        const QString sid = Storage::gameStorageId(settings.serverId);
+        SmartModInstaller::cleanupEmptyAliasFolder(settings.plutoniumInstance, sid, modSelection);
+        const QString folder = SmartModInstaller::resolveFsGameFolder(
+            settings.plutoniumInstance, sid, modSelection);
+        if (!folder.isEmpty())
+            args << "+set" << "fs_game" << ("mods/" + folder);
     }
 
     args << "+exec" << configSelection << "+set" << "net_port" << port << "+map_rotate";

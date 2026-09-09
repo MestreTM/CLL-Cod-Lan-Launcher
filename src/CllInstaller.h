@@ -37,7 +37,10 @@ namespace CllInstaller
     bool archiveMentionsInstaller(const QString &archivePath);
     Manifest peekArchive(const QString &archivePath);
 
-    bool confirmAndShow(QWidget *parent, const Manifest &man);
+    bool confirmAndShow(QWidget *parent, const Manifest &man,
+                        const QString &plutoniumRoot = QString(),
+                        const QString &gameRoot = QString(),
+                        bool *makeBackup = nullptr);
     using ProgressFn = std::function<void(int percent, const QString &label)>;
 
     QString apply(const Manifest &man,
@@ -45,5 +48,6 @@ namespace CllInstaller
                   const QString &plutoniumRoot,
                   const QString &gameRoot,
                   const QString &archivePath,
-                  const ProgressFn &onProgress = nullptr);
+                  const ProgressFn &onProgress = nullptr,
+                  bool makeBackup = true);
 }

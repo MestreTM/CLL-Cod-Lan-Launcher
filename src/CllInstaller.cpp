@@ -16,8 +16,11 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QCheckBox>
 #include <QFrame>
+#include <QHash>
 #include <QScrollArea>
+#include <QStorageInfo>
 
 namespace {
 
@@ -267,13 +270,15 @@ Manifest peekArchive(const QString &archivePath)
     return m;
 }
 
-bool confirmAndShow(QWidget *parent, const Manifest &man)
+bool confirmAndShow(QWidget *parent, const Manifest &man,
+                    const QString &plutoniumRoot, const QString &gameRoot,
+                    bool *makeBackup)
 {
     QDialog dlg(parent);
     dlg.setWindowTitle(man.name.isEmpty() ? QObject::tr("CLL pack") : man.name);
     dlg.setModal(true);
-    dlg.setMinimumSize(520, 420);
-    dlg.resize(560, 480);
+    dlg.setMinimumSize(560, 460);
+    dlg.resize(640, 520);
     dlg.setStyleSheet(
         "QDialog { background: #161821; }"
         "QLabel { color: #e8e6f2; }"
@@ -282,10 +287,13 @@ bool confirmAndShow(QWidget *parent, const Manifest &man)
         "QLabel#CllMeta { color: #8a8ba3; font-size: 12px; }"
         "QLabel#CllChip { background: #242636; color: #d9d6ea; border-radius: 11px; padding: 4px 10px; font-size: 11px; }"
         "QLabel#CllChipAccent { background: #9184d9; color: #14121f; border-radius: 11px; padding: 4px 10px; font-size: 11px; font-weight: 700; }"
+        "QPushButton#CllMore { background: #242636; color: #d9d6ea; border: 1px solid #2b2e42; }"
+        "QPushButton#CllMore:hover { background: #2b2e42; }"
         "QFrame#CllCard { background: #1c1e2b; border: 1px solid #2b2e42; border-radius: 10px; }"
         "QLabel#CllDestFrom { color: #c8c6d8; font-size: 12px; }"
         "QLabel#CllDestTo { color: #9184d9; font-size: 11px; font-weight: 600; }"
         "QTextEdit { background: #12131c; color: #d7d5e6; border: 1px solid #2b2e42; border-radius: 8px; padding: 8px; }"
+        "QCheckBox { color: #d7d5e6; }"
         "QPushButton { min-height: 34px; padding: 0 16px; border-radius: 8px; }"
         "QPushButton#CllCancel { background: #242636; color: #d9d6ea; border: 1px solid #2b2e42; }"
         "QPushButton#CllCancel:hover { background: #2b2e42; }"
@@ -349,41 +357,177 @@ bool confirmAndShow(QWidget *parent, const Manifest &man)
     desc->setText(man.description.isEmpty() ? QObject::tr("No description.") : man.description);
     root->addWidget(desc);
 
+    auto *mapHead = new QHBoxLayout();
     auto *mapTitle = new QLabel(QObject::tr("Install map"), &dlg);
     mapTitle->setObjectName("CllMeta");
-    root->addWidget(mapTitle);
-
-    auto *scroll = new QScrollArea(&dlg);
-    scroll->setWidgetResizable(true);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    auto *mapHost = new QWidget;
-    auto *mapLay = new QVBoxLayout(mapHost);
-    mapLay->setContentsMargins(0, 0, 2, 0);
-    mapLay->setSpacing(6);
-    for (const FolderRule &r : man.folders) {
-        auto *card = new QFrame(mapHost);
-        card->setObjectName("CllCard");
-        auto *cl = new QHBoxLayout(card);
-        cl->setContentsMargins(12, 8, 12, 8);
-        const QString dest = r.dest.isEmpty() ? r.from : r.dest;
-        const bool game = r.target == QLatin1String("game_folder");
-        auto *from = new QLabel(r.from, card);
-        from->setObjectName("CllDestFrom");
-        from->setWordWrap(true);
-        auto *arrow = new QLabel(QStringLiteral("→"), card);
-        arrow->setObjectName("CllMeta");
-        auto *to = new QLabel(
-            (game ? QObject::tr("Game") : QObject::tr("Plutonium")) + " / " + dest, card);
-        to->setObjectName("CllDestTo");
-        to->setWordWrap(true);
-        cl->addWidget(from, 1);
-        cl->addWidget(arrow, 0);
-        cl->addWidget(to, 1);
-        mapLay->addWidget(card);
+    mapHead->addWidget(mapTitle);
+    mapHead->addStretch();
+    root->addLayout(mapHead);
+    if (!man.folders.isEmpty()) {
+        auto *moreBtn = new QPushButton(QObject::tr("See more"), &dlg);
+        moreBtn->setObjectName("CllMore");
+        moreBtn->setCursor(Qt::PointingHandCursor);
+        root->addWidget(moreBtn);
+        QObject::connect(moreBtn, &QPushButton::clicked, &dlg, [&man, &dlg]() {
+            QDialog details(&dlg);
+            details.setWindowTitle(QObject::tr("Install map"));
+            details.setModal(true);
+            details.resize(560, 360);
+            details.setStyleSheet(dlg.styleSheet());
+            auto *vl = new QVBoxLayout(&details);
+            vl->setContentsMargins(16, 14, 16, 14);
+            vl->setSpacing(8);
+            auto *scroll = new QScrollArea(&details);
+            scroll->setWidgetResizable(true);
+            scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            auto *mapHost = new QWidget;
+            auto *mapLay = new QVBoxLayout(mapHost);
+            mapLay->setContentsMargins(0, 0, 2, 0);
+            mapLay->setSpacing(6);
+            auto *sec = new QLabel(QObject::tr("Folders to copy"), mapHost);
+            sec->setObjectName("CllDestTo");
+            mapLay->addWidget(sec);
+            auto *hint = new QLabel(QObject::tr("Each line is a folder in the pack and where it will be installed."), mapHost);
+            hint->setObjectName("CllMeta");
+            hint->setWordWrap(true);
+            mapLay->addWidget(hint);
+            for (const FolderRule &r : man.folders) {
+                auto *card = new QFrame(mapHost);
+                card->setObjectName("CllCard");
+                auto *cl = new QHBoxLayout(card);
+                cl->setContentsMargins(12, 8, 12, 8);
+                const QString dest = r.dest.isEmpty() ? r.from : r.dest;
+                const bool game = r.target == QLatin1String("game_folder");
+                auto *from = new QLabel(r.from, card);
+                from->setObjectName("CllDestFrom");
+                from->setWordWrap(true);
+                auto *arrow = new QLabel(QStringLiteral("→"), card);
+                arrow->setObjectName("CllMeta");
+                auto *to = new QLabel(
+                    (game ? QObject::tr("Game") : QObject::tr("Plutonium")) + " / " + dest, card);
+                to->setObjectName("CllDestTo");
+                to->setWordWrap(true);
+                cl->addWidget(from, 1);
+                cl->addWidget(arrow, 0);
+                cl->addWidget(to, 1);
+                mapLay->addWidget(card);
+            }
+            mapLay->addStretch();
+            scroll->setWidget(mapHost);
+            vl->addWidget(scroll, 1);
+            auto *closeBtn = new QPushButton(QObject::tr("Close"), &details);
+            closeBtn->setObjectName("CllCancel");
+            closeBtn->setCursor(Qt::PointingHandCursor);
+            vl->addWidget(closeBtn, 0, Qt::AlignRight);
+            QObject::connect(closeBtn, &QPushButton::clicked, &details, &QDialog::accept);
+            details.exec();
+        });
     }
-    mapLay->addStretch();
-    scroll->setWidget(mapHost);
-    root->addWidget(scroll, 1);
+
+    auto fmtBytes = [](qint64 b) -> QString {
+        if (b < 0)
+            return QStringLiteral("—");
+        if (b < 1024)
+            return QObject::tr("%1 B").arg(b);
+        if (b < 1024 * 1024)
+            return QObject::tr("%1 KB").arg(b / 1024.0, 0, 'f', 1);
+        if (b < 1024LL * 1024 * 1024)
+            return QObject::tr("%1 MB").arg(b / (1024.0 * 1024.0), 0, 'f', 1);
+        return QObject::tr("%1 GB").arg(b / (1024.0 * 1024.0 * 1024.0), 0, 'f', 2);
+    };
+
+    struct DiskAcc { QString path; QString label; qint64 payload = 0; };
+    QHash<QString, DiskAcc> disks;
+    auto addPayload = [&](const QString &path, const QString &label, qint64 n) {
+        if (path.isEmpty())
+            return;
+        DiskAcc &d = disks[path];
+        d.path = path;
+        d.label = label;
+        d.payload += n;
+    };
+    const auto listed = man.sourceArchive.isEmpty()
+                            ? QList<ArchiveTool::ListedFile>()
+                            : ArchiveTool::listDetailed(man.sourceArchive);
+    for (const FolderRule &r : man.folders) {
+        const bool game = r.target == QLatin1String("game_folder");
+        qint64 bytes = 0;
+        const QString prefix = r.from.endsWith(QLatin1Char('/')) ? r.from : (r.from + QLatin1Char('/'));
+        for (const auto &e : listed) {
+            if (e.isDir)
+                continue;
+            if (e.path == r.from || e.path.startsWith(prefix) || e.path.contains(QLatin1Char('/') + prefix)
+                || e.path.endsWith(QLatin1Char('/') + r.from) || e.path.contains(QLatin1Char('/') + r.from + QLatin1Char('/')))
+                bytes += e.size;
+        }
+        addPayload(game ? gameRoot : plutoniumRoot,
+                   game ? QObject::tr("Game") : QObject::tr("Plutonium"),
+                   bytes);
+    }
+    if (disks.isEmpty()) {
+        addPayload(plutoniumRoot, QObject::tr("Plutonium"), 0);
+        if (!gameRoot.isEmpty())
+            addPayload(gameRoot, QObject::tr("Game"), 0);
+    }
+
+    auto *diskRow = new QHBoxLayout();
+    for (const DiskAcc &d : disks) {
+        const QStorageInfo st(d.path);
+        const qint64 available = st.bytesAvailable();
+        const qint64 total = st.bytesTotal();
+        const qint64 used = (total > 0 && available >= 0) ? (total - available) : 0;
+        auto *card = new QFrame(&dlg);
+        card->setObjectName("CllCard");
+        auto *vl = new QVBoxLayout(card);
+        const QString drive = st.rootPath().isEmpty() ? d.path.left(2) : st.rootPath();
+        const bool diskLow = available >= 0 && available < 25LL * 1024 * 1024 * 1024;
+        auto *diskName = new QLabel(d.label + QStringLiteral("  ") + drive
+                                        + (diskLow ? QStringLiteral(" — ") + QObject::tr("Disk almost full!")
+                                                   : QString()), card);
+        if (diskLow)
+            diskName->setStyleSheet("color:#e45b5b; font-weight:700;");
+        vl->addWidget(diskName);
+        auto *barHost = new QWidget(card);
+        barHost->setFixedHeight(16);
+        barHost->setStyleSheet("background:#12131c; border:1px solid #2b2e42; border-radius:6px;");
+        auto *barLay = new QHBoxLayout(barHost);
+        barLay->setContentsMargins(1, 1, 1, 1);
+        barLay->setSpacing(0);
+        const qint64 need = d.payload;
+        int usedPct = 0, modPct = 0;
+        if (total > 0) {
+            usedPct = int(qBound(qint64(0), used * 100 / total, qint64(100)));
+            modPct = int(qBound(qint64(1), need * 100 / qMax(total, qint64(1)), qint64(100)));
+            if (usedPct + modPct > 100)
+                usedPct = qMax(0, 100 - modPct);
+        } else {
+            modPct = 8;
+        }
+        auto *usedChunk = new QFrame(barHost);
+        usedChunk->setStyleSheet(diskLow
+                                    ? "background:#c23b3b; border:none; border-top-left-radius:5px; border-bottom-left-radius:5px; border-top-right-radius:0; border-bottom-right-radius:0;"
+                                    : "background:#5c5e78; border:none; border-top-left-radius:5px; border-bottom-left-radius:5px; border-top-right-radius:0; border-bottom-right-radius:0;");
+        auto *modChunk = new QFrame(barHost);
+        modChunk->setStyleSheet("background:#e89a3a; border:none; border-top-left-radius:0; border-bottom-left-radius:0; border-top-right-radius:5px; border-bottom-right-radius:5px;");
+        barLay->addWidget(usedChunk, qMax(1, usedPct));
+        barLay->addWidget(modChunk, qMax(2, modPct));
+        barLay->addStretch(qMax(1, 100 - usedPct - modPct));
+        vl->addWidget(barHost);
+        auto *diskTxt = new QLabel(card);
+        diskTxt->setTextFormat(Qt::RichText);
+        diskTxt->setText(QObject::tr("Livre %1 de %2").arg(fmtBytes(available), fmtBytes(total))
+                         + QStringLiteral("<br>")
+                         + QStringLiteral("<span style='color:#e89a3a'>%1 %2</span>  ·  <span style='color:#e89a3a'>%3 ~%4</span>")
+                               .arg(QObject::tr("Mod"), fmtBytes(d.payload),
+                                    QObject::tr("backup"), fmtBytes(d.payload / 4)));
+        vl->addWidget(diskTxt);
+        diskRow->addWidget(card);
+    }
+    root->addLayout(diskRow);
+
+    auto *backup = new QCheckBox(QObject::tr("Guardar backup dos arquivos substituidos (compartilhado)"), &dlg);
+    backup->setChecked(true);
+    root->addWidget(backup);
 
     auto *row = new QHBoxLayout();
     row->addStretch();
@@ -397,7 +541,11 @@ bool confirmAndShow(QWidget *parent, const Manifest &man)
     root->addLayout(row);
     QObject::connect(cancel, &QPushButton::clicked, &dlg, &QDialog::reject);
     QObject::connect(ok, &QPushButton::clicked, &dlg, &QDialog::accept);
-    return dlg.exec() == QDialog::Accepted;
+    if (dlg.exec() != QDialog::Accepted)
+        return false;
+    if (makeBackup)
+        *makeBackup = backup->isChecked();
+    return true;
 }
 
 QString apply(const Manifest &man,
@@ -405,7 +553,8 @@ QString apply(const Manifest &man,
               const QString &plutoniumRoot,
               const QString &gameRoot,
               const QString &archivePath,
-              const ProgressFn &onProgress)
+              const ProgressFn &onProgress,
+              bool makeBackup)
 {
     if (!man.valid)
         return man.error.isEmpty() ? QObject::tr("Invalid CLL manifest.") : man.error;
@@ -454,9 +603,11 @@ QString apply(const Manifest &man,
             const QString dst = destRoot + "/" + rel;
             const bool existed = QFileInfo::exists(dst);
             if (existed) {
-                const QString bak = ckpt + "/backup/" + (toGame ? "game/" : "pu/") + destRel + "/" + rel;
-                if (!copyFileOverwrite(dst, bak, error))
-                    return error;
+                if (makeBackup) {
+                    const QString bak = ckpt + "/backup/" + (toGame ? "game/" : "pu/") + destRel + "/" + rel;
+                    if (!copyFileOverwrite(dst, bak, error))
+                        return error;
+                }
                 if (toGame)
                     replacedGame << destRel + "/" + rel;
                 else

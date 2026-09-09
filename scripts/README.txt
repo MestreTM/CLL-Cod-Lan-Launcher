@@ -73,3 +73,9 @@ Typical flow
   4. scripts\build-qt-static.bat
   5. scripts\build-app.bat
   6. Ship dist-static\LanLauncherQt.exe
+
+
+Windows exe icon
+----------------
+resources/icons/icon.ico is linked into LanLauncherQt.exe via resources/app.rc.in.
+Replace that .ico and rebuild if you want a different mark.

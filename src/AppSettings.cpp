@@ -126,6 +126,7 @@ bool AppSettings::loadFromIni()
     theme             = ini.value("theme", theme).toString();
     setupCompleted    = ini.value("setup completed", false).toBool();
     language          = ini.value("language", language).toString();
+    homeEnabled       = ini.value("home enabled", true).toBool();
     if (!setupCompleted && (!username.isEmpty() || !waw.isEmpty() || !bo1.isEmpty() || !bo2.isEmpty() || !mw3.isEmpty()))
         setupCompleted = true;
     ini.endGroup();
@@ -149,6 +150,7 @@ void AppSettings::saveToIni() const
     ini.setValue("theme", copy.theme);
     ini.setValue("setup completed", copy.setupCompleted);
     ini.setValue("language", copy.language);
+    ini.setValue("home enabled", copy.homeEnabled);
     ini.endGroup();
     ini.sync();
 }
@@ -173,14 +175,14 @@ QString AppSettings::gameFolder(const QString &gameIdName) const
     return QString();
 }
 
-//   settings[VERSIONNUM] = "1.0.0"
+//   settings[VERSIONNUM] = "1.1.0"
 //   settings[THEME] = "DarkAmber"
 //   if os.path.isfile("LanLauncher.ini"): LoadFromINI(...)
 //   UseLocalPuIfPresent(...)
 //   if settings[PLUTONIUMINSTANCE] == '': ... default AppData ...
 AppSettings AppSettings::loadForStartup()
 {
-    AppSettings s; // ja nasce com versionNum = "1.0.0" e theme = "DarkAmber"
+    AppSettings s; // ja nasce com versionNum = "1.1.0" e theme = "DarkAmber"
     s.loadFromIni();
     if (s.language.trimmed().isEmpty())
         s.language = QStringLiteral("en");

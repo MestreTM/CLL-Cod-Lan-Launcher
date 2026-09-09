@@ -8,6 +8,7 @@
 #include "I18n.h"
 
 #include "pages/PlayPage.h"
+#include "pages/HomePage.h"
 #include "pages/ModsPage.h"
 #include "pages/ServerPage.h"
 #include "pages/SettingsPage.h"
@@ -51,11 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_stack = new QStackedWidget(this);
     m_playPage = new PlayPage(m_settings, this);
+    m_homePage = new HomePage(m_settings, this);
     m_modsPage = new ModsPage(m_settings, this);
     m_serverPage = new ServerPage(m_settings, this);
     m_settingsPage = new SettingsPage(m_settings, this);
     m_aboutPage = new AboutPage(this);
     m_stack->addWidget(m_playPage);
+    m_stack->addWidget(m_homePage);
     m_stack->addWidget(m_modsPage);
     m_stack->addWidget(m_serverPage);
     m_stack->addWidget(m_settingsPage);
@@ -73,18 +76,34 @@ MainWindow::MainWindow(QWidget *parent)
     outer->addWidget(right, 1);
     setCentralWidget(central);
 
+    connect(m_homePage, &HomePage::installRequested, this, [this](const QString &modId) {
+        showTool(ToolMods);
+        if (!modId.isEmpty())
+            m_modsPage->installFromCatalog(modId);
+    });
+    connect(m_homePage, &HomePage::gameRequested, this, [this](const QString &gameId) {
+        m_modsPage->selectGame(gameId);
+        m_homePage->selectGame(gameId);
+    });
     connect(m_playPage, &PlayPage::launchRequested, this, &MainWindow::onLaunchGame);
     connect(m_playPage, &PlayPage::stopRequested, this, &MainWindow::onStopGame);
     connect(m_settingsPage, &SettingsPage::plutoniumFolderChanged, this, [this]() {
         m_modsPage->refreshList();
         m_serverPage->refreshList();
     });
+    connect(m_settingsPage, &SettingsPage::homeEnabledChanged, this, [this](bool) {
+        applyHomeVisibility();
+    });
     connect(m_serverPage, &ServerPage::launchServerRequested, this, &MainWindow::onLaunchServer);
     connect(m_serverPage, &ServerPage::stopServerRequested, this, &MainWindow::onStopServer);
     connect(&m_processPollTimer, &QTimer::timeout, this, &MainWindow::onPollRunningProcess);
     m_processPollTimer.setInterval(2000);
 
-    selectGame(2);
+    applyHomeVisibility();
+    if (m_settings.homeEnabled)
+        showTool(ToolHome);
+    else
+        selectGame(2);
     connect(&I18nHub::instance(), &I18nHub::languageChanged, this, &MainWindow::retranslate);
 }
 
@@ -105,7 +124,9 @@ void MainWindow::retranslate()
     for (int i = 0; i < m_toolButtons.size() && i < tools.size(); ++i)
         m_toolButtons[i]->setText("  " + tools[i]);
     applyHeader(m_toolIndex);
+    if (m_homeNavBtn) m_homeNavBtn->setText("  " + tr("Início"));
     if (m_playPage) m_playPage->retranslate();
+    if (m_homePage) m_homePage->retranslate();
     if (m_modsPage) m_modsPage->retranslate();
     if (m_serverPage) m_serverPage->retranslate();
     if (m_settingsPage) m_settingsPage->retranslate();
@@ -137,6 +158,15 @@ QWidget *MainWindow::buildSidebar()
     brand->addLayout(titles, 1);
     layout->addLayout(brand);
     layout->addSpacing(12);
+
+    m_homeNavBtn = new QPushButton(QIcon(":/icons/main.svg"), "  " + tr("Início"), sidebar);
+    m_homeNavBtn->setObjectName("SidebarButton");
+    m_homeNavBtn->setCheckable(true);
+    m_homeNavBtn->setIconSize(QSize(16, 16));
+    m_homeNavBtn->setCursor(Qt::PointingHandCursor);
+    layout->addWidget(m_homeNavBtn);
+    connect(m_homeNavBtn, &QPushButton::clicked, this, [this]() { showTool(ToolHome); });
+    layout->addSpacing(10);
 
     m_sidebarGames = new QLabel(tr("JOGOS"), sidebar);
     m_sidebarGames->setObjectName("NavSection");
@@ -197,7 +227,7 @@ QWidget *MainWindow::buildSidebar()
         btn->setCursor(Qt::PointingHandCursor);
         layout->addWidget(btn);
         m_toolButtons << btn;
-        connect(btn, &QPushButton::clicked, this, [this, i]() { showTool(i + 1); });
+        connect(btn, &QPushButton::clicked, this, [this, i]() { showTool(i + 2); });
     }
 
     layout->addStretch();
@@ -269,6 +299,9 @@ void MainWindow::applyHeader(int toolIndex)
     struct Info { QString title; QString sub; bool save; };
     Info info;
     switch (toolIndex) {
+    case ToolHome:
+        info = {tr("Início"), tr("Descubra mods e mapas por jogo."), false};
+        break;
     case ToolMods:
         info = {tr("Mods"), tr("Instale pacotes e mapas customizados por jogo."), false};
         break;
@@ -300,8 +333,23 @@ void MainWindow::selectGame(int gameIndex)
     syncNav();
 }
 
+void MainWindow::applyHomeVisibility()
+{
+    const bool on = m_settings.homeEnabled;
+    if (m_homeNavBtn)
+        m_homeNavBtn->setVisible(on);
+    if (m_homePage)
+        m_homePage->setEnabled(on);
+    if (!on && m_toolIndex == ToolHome)
+        selectGame(m_gameIndex);
+}
+
 void MainWindow::showTool(int toolIndex)
 {
+    if (toolIndex == ToolHome && !m_settings.homeEnabled) {
+        selectGame(m_gameIndex);
+        return;
+    }
     m_toolIndex = toolIndex;
     const QString gameId = GameCatalog::all().at(m_gameIndex).id;
     if (toolIndex == ToolMods)
@@ -315,10 +363,12 @@ void MainWindow::showTool(int toolIndex)
 
 void MainWindow::syncNav()
 {
+    if (m_homeNavBtn)
+        m_homeNavBtn->setChecked(m_toolIndex == ToolHome);
     for (int i = 0; i < m_gameButtons.size(); ++i)
         m_gameButtons[i]->setChecked(m_toolIndex == ToolPlay && i == m_gameIndex);
     for (int i = 0; i < m_toolButtons.size(); ++i)
-        m_toolButtons[i]->setChecked(m_toolIndex == i + 1);
+        m_toolButtons[i]->setChecked(m_toolIndex == i + 2);
 }
 
 void MainWindow::onLaunchGame(const QString &gameId, bool multiplayer)

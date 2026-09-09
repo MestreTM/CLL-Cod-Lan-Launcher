@@ -2,16 +2,21 @@
 #include "AppSettings.h"
 #include "ArchiveTool.h"
 #include "CllInstaller.h"
+#include "ModPreview.h"
 #include "GameCatalog.h"
 #include "Dialogs.h"
 #include "Downloader.h"
+#include "GithubModInstaller.h"
+#include "HomeCatalog.h"
 #include "SmartModInstaller.h"
 #include "Storage.h"
 
 #include <QComboBox>
 #include <QSet>
 #include <algorithm>
+#include <QClipboard>
 #include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -24,11 +29,33 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QtConcurrent/QtConcurrent>
 #include <QMetaObject>
 #include <QMimeData>
 #include <QUrl>
+
+namespace {
+bool safeRemoveTempDir(const QString &path)
+{
+    if (path.isEmpty())
+        return false;
+    const QFileInfo fi(path);
+    const QString abs = QDir::cleanPath(fi.absoluteFilePath());
+    if (abs.isEmpty() || abs == QLatin1String("/") || abs == QLatin1String(".") )
+        return false;
+    if (abs.length() < 8)
+        return false;
+    const QString name = fi.fileName();
+    if (!name.startsWith(QLatin1String("LanLauncher")))
+        return false;
+    const QString tempRoot = QDir::cleanPath(QDir::tempPath());
+    if (!abs.startsWith(tempRoot, Qt::CaseInsensitive))
+        return false;
+    return QDir(abs).removeRecursively();
+}
+}
 
 ModsPage::ModsPage(AppSettings &settings, QWidget *parent)
     : QWidget(parent)
@@ -109,7 +136,7 @@ ModsPage::ModsPage(AppSettings &settings, QWidget *parent)
     installTitle->setObjectName("modsInstallTitle");
     installTitle->setObjectName("CardTitle");
     auto *installDesc = new QLabel(
-        tr("Zip, Rar, 7z, exe ou .cll — arraste um pack CLL aqui."), installCard);
+        tr("Zip, Rar, 7z, exe, .cll ou link do GitHub — Drop a mod file here."), installCard);
     installDesc->setObjectName("modsInstallDesc");
     installLayout->addWidget(installKicker);
     installLayout->addWidget(installTitle);
@@ -117,7 +144,7 @@ ModsPage::ModsPage(AppSettings &settings, QWidget *parent)
     auto *row = new QHBoxLayout();
     row->setSpacing(8);
     m_modPathEdit = new QLineEdit(installCard);
-    m_modPathEdit->setPlaceholderText(tr("Caminho do arquivo do mod"));
+    m_modPathEdit->setPlaceholderText(tr("Arquivo do mod ou link do GitHub"));
     auto *browseBtn = new QPushButton(tr("Procurar"), installCard);
     browseBtn->setObjectName("modsBrowse");
     m_installBtn = new QPushButton(tr("Instalar mod"), installCard);
@@ -154,13 +181,131 @@ ModsPage::ModsPage(AppSettings &settings, QWidget *parent)
         const QString err = m_installWatcher.result();
         const Job job = m_job;
         m_job = Job::None;
-        if (err.isEmpty()) {
+        if (job == Job::Peek && err == QLatin1String("__PEEK_OK__")) {
+            auto preview = m_pendingPreview;
+            if (!preview.error.isEmpty() && preview.mappings.isEmpty()) {
+                safeRemoveTempDir(m_pendingExtract);
+                Dialogs::error(this, preview.error);
+                return;
+            }
+            if (m_pendingGithub && m_pendingGhMan.hasExecutables) {
+                QMessageBox warn(this);
+                warn.setIcon(QMessageBox::Warning);
+                warn.setWindowTitle(tr("Unsafe files"));
+                warn.setText(tr("This release contains .exe or .dll files that can harm your computer.\n"
+                                "The program does not verify the origin of these files."));
+                if (!m_pendingGhMan.executableNames.isEmpty())
+                    warn.setInformativeText(m_pendingGhMan.executableNames.mid(0, 12).join(QStringLiteral("\n")));
+                warn.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                auto *go = warn.addButton(tr("Install anyway"), QMessageBox::AcceptRole);
+                warn.exec();
+                if (warn.clickedButton() != go) {
+                    m_pendingGithub = false;
+                    return;
+                }
+            }
+            if (!ModPreview::confirm(this, preview)) {
+                safeRemoveTempDir(m_pendingExtract);
+                m_pendingGithub = false;
+                return;
+            }
+            const QString pu = m_settings.plutoniumInstance;
+            const QString gameFolder = m_settings.gameFolder(m_settings.modId);
+            const QString archivePath = m_pendingArchive;
+            const QString tempDir = m_pendingExtract;
+            const bool github = m_pendingGithub;
+            const auto ghMan = m_pendingGhMan;
+            m_pendingGithub = false;
+            m_job = Job::Install;
+            setBusy(true);
+            m_progress->setVisible(true);
+            m_progressLabel->setVisible(true);
+            m_progress->setRange(0, 100);
+            m_progress->setValue(0);
+            m_progressLabel->setText(github ? tr("Downloading pack...") : tr("Extraindo pacote..."));
+            auto future = QtConcurrent::run([=]() -> QString {
+                if (github) {
+                    QList<GithubModInstaller::FailedDownload> failed;
+                    const QString e = GithubModInstaller::apply(
+                        ghMan, preview, pu, gameFolder,
+                        [this](int pct, const QString &label) {
+                            QMetaObject::invokeMethod(this, [this, pct, label]() {
+                                m_progress->setRange(0, 100);
+                                m_progress->setValue(pct);
+                                m_progressLabel->setText(label);
+                            }, Qt::QueuedConnection);
+                        },
+                        &failed);
+                    QMetaObject::invokeMethod(this, [this, failed]() {
+                        m_lastGhFailed = failed;
+                    }, Qt::BlockingQueuedConnection);
+                    return e;
+                }
+                safeRemoveTempDir(tempDir);
+                QDir().mkpath(tempDir);
+                QString extractError;
+                const bool extracted = ArchiveTool::extractToDirectory(
+                    archivePath, tempDir, &extractError,
+                    [this](int pct) {
+                        QMetaObject::invokeMethod(this, [this, pct]() {
+                            m_progress->setRange(0, 100);
+                            m_progress->setValue(int(pct * 0.7));
+                            m_progressLabel->setText(tr("Extraindo pacote... %1%").arg(pct));
+                        }, Qt::QueuedConnection);
+                    });
+                if (!extracted) {
+                    safeRemoveTempDir(tempDir);
+                    return extractError.isEmpty() ? QObject::tr("Falha ao extrair o arquivo.") : extractError;
+                }
+                QMetaObject::invokeMethod(this, [this]() {
+                    m_progress->setValue(72);
+                    m_progressLabel->setText(tr("Copiando arquivos..."));
+                }, Qt::QueuedConnection);
+                auto ready = preview;
+                ready.extractedRoot = tempDir;
+                const QString e = ModPreview::apply(ready, pu, gameFolder, archivePath);
+                safeRemoveTempDir(tempDir);
+                return e;
+            });
+            m_installWatcher.setFuture(future);
+            return;
+        }
+        if (job == Job::Install || job == Job::Remove)
             refreshList();
+        if (err.isEmpty()) {
             if (job == Job::Remove)
                 QMessageBox::information(this, tr("Mods"), tr("Mod removido."));
             else
                 QMessageBox::information(this, tr("Mods"), tr("Mod instalado com sucesso."));
+        } else if (err == QLatin1String("__PARTIAL__")) {
+            QStringList lines;
+            QString clip;
+            const int show = qMin(12, m_lastGhFailed.size());
+            for (int i = 0; i < m_lastGhFailed.size(); ++i) {
+                const auto &f = m_lastGhFailed[i];
+                clip += f.url + QLatin1Char('\n') + f.destPath + QLatin1String("\n\n");
+                if (i < show)
+                    lines << f.name;
+            }
+            if (m_lastGhFailed.size() > show)
+                lines << tr("… e mais %1").arg(m_lastGhFailed.size() - show);
+            QMessageBox box(this);
+            box.setIcon(QMessageBox::Warning);
+            box.setWindowTitle(tr("Missing files"));
+            box.setText(tr("Pack installed, but %1 file(s) failed and were skipped.\n"
+                           "Download them manually and put each file in the destination folder.")
+                            .arg(m_lastGhFailed.size()));
+            box.setInformativeText(lines.join(QLatin1Char('\n')));
+            auto *copyBtn = box.addButton(tr("Copy links"), QMessageBox::ActionRole);
+            box.addButton(tr("OK"), QMessageBox::AcceptRole);
+            box.exec();
+            if (box.clickedButton() == copyBtn) {
+                QGuiApplication::clipboard()->setText(clip.trimmed());
+                QMessageBox::information(this, tr("Missing files"),
+                                         tr("Links and destination folders were copied."));
+            }
         } else {
+            m_pendingGithub = false;
             Dialogs::error(this, err);
         }
     });
@@ -197,6 +342,8 @@ void ModsPage::refreshList()
     const QString sid = Storage::gameStorageId(m_settings.modId);
     const QString pu = m_settings.plutoniumInstance;
     const QStringList ckpts = SmartModInstaller::checkpointIds(pu, sid);
+    for (const QString &id : ckpts)
+        SmartModInstaller::cleanupEmptyAliasFolder(pu, sid, id);
 
     QStringList hidden;
     for (const QString &id : ckpts) {
@@ -338,11 +485,11 @@ bool ModsPage::tryCllInstall(const QString &path)
     }
     if (!man.gameId.isEmpty())
         selectGame(man.gameId);
-    if (!CllInstaller::confirmAndShow(this, man))
-        return true;
-
     const QString pu = m_settings.plutoniumInstance;
     const QString gameFolder = m_settings.gameFolder(man.gameId);
+    bool makeBackup = true;
+    if (!CllInstaller::confirmAndShow(this, man, pu, gameFolder, &makeBackup))
+        return true;
     m_job = Job::Install;
     setBusy(true);
     m_progress->setVisible(true);
@@ -352,7 +499,7 @@ bool ModsPage::tryCllInstall(const QString &path)
     m_progressLabel->setText(tr("Extracting pack..."));
     auto future = QtConcurrent::run([=]() -> QString {
         const QString tempDir = QDir::temp().filePath("LanLauncher_cll_extract");
-        QDir(tempDir).removeRecursively();
+        safeRemoveTempDir(tempDir);
         QDir().mkpath(tempDir);
         QString extractError;
         const bool extracted = ArchiveTool::extractToDirectory(
@@ -365,7 +512,7 @@ bool ModsPage::tryCllInstall(const QString &path)
                 }, Qt::QueuedConnection);
             });
         if (!extracted) {
-            QDir(tempDir).removeRecursively();
+            safeRemoveTempDir(tempDir);
             return extractError.isEmpty() ? QObject::tr("Failed to extract the pack.") : extractError;
         }
         QMetaObject::invokeMethod(this, [this]() {
@@ -380,12 +527,68 @@ bool ModsPage::tryCllInstall(const QString &path)
                     m_progress->setValue(45 + int(pct * 0.55));
                     m_progressLabel->setText(label);
                 }, Qt::QueuedConnection);
-            });
-        QDir(tempDir).removeRecursively();
+            },
+            makeBackup);
+        safeRemoveTempDir(tempDir);
         return err;
     });
     m_installWatcher.setFuture(future);
     return true;
+}
+
+void ModsPage::installFromCatalog(const QString &modId)
+{
+    const auto cat = HomeCatalog::load();
+    const auto *mod = HomeCatalog::findMod(cat, modId);
+    if (!mod || mod->url.isEmpty())
+        return;
+    if (!mod->game.isEmpty())
+        selectGame(mod->game);
+    if (GithubModInstaller::looksLikeUrl(mod->url)
+        || mod->kind.compare(QLatin1String("github"), Qt::CaseInsensitive) == 0
+        || mod->kind.compare(QLatin1String("host"), Qt::CaseInsensitive) == 0) {
+        tryGithubInstall(mod->url);
+        return;
+    }
+    handleModFile(HomeCatalog::resolveAsset(mod->url));
+}
+
+void ModsPage::tryGithubInstall(const QString &url)
+{
+    const QString pu = m_settings.plutoniumInstance;
+    if (pu.isEmpty()) {
+        Dialogs::error(this, tr("Configure a pasta do Plutonium em Configuracoes antes de instalar mods."));
+        return;
+    }
+    const QString gameId = m_settings.modId;
+    const QString gameCode = Storage::gameStorageId(m_settings.modId);
+    const QString gameFolder = m_settings.gameFolder(gameId);
+    m_pendingArchive = url;
+    m_pendingExtract.clear();
+    m_pendingGithub = true;
+    m_job = Job::Peek;
+    setBusy(true);
+    m_progress->setVisible(true);
+    m_progressLabel->setVisible(true);
+    m_progress->setRange(0, 0);
+    m_progressLabel->setText(tr("Reading GitHub manifest..."));
+    auto future = QtConcurrent::run([this, url, gameId, gameCode, pu, gameFolder]() -> QString {
+        QString error;
+        ModPreview::Preview preview;
+        const auto man = GithubModInstaller::peek(url, gameId, gameCode, pu, gameFolder, &preview, error);
+        QMetaObject::invokeMethod(this, [this, preview, man]() {
+            m_pendingPreview = preview;
+            m_pendingGhMan = man;
+            if (!preview.gameId.isEmpty())
+                selectGame(preview.gameId);
+        }, Qt::BlockingQueuedConnection);
+        if (!man.valid || !preview.valid())
+            return error.isEmpty()
+                       ? (preview.error.isEmpty() ? QObject::tr("Could not read the GitHub pack.") : preview.error)
+                       : error;
+        return QStringLiteral("__PEEK_OK__");
+    });
+    m_installWatcher.setFuture(future);
 }
 
 void ModsPage::onInstallMod()
@@ -400,6 +603,10 @@ void ModsPage::onInstallMod()
     m_settings.modId = game;
 
     const QString archivePath = m_modPathEdit->text().trimmed();
+    if (GithubModInstaller::looksLikeUrl(archivePath)) {
+        tryGithubInstall(archivePath);
+        return;
+    }
     if (archivePath.isEmpty() || !QFileInfo::exists(archivePath)) {
         Dialogs::error(this, tr("Escolha o arquivo do mod (zip, rar, 7z, exe ou cll) em Procurar."));
         return;
@@ -418,7 +625,6 @@ void ModsPage::onInstallMod()
 
 void ModsPage::installStandardOrSmart(const QString &archivePath)
 {
-    const QString modsPath = Storage::subdir(m_settings.plutoniumInstance, m_settings.modId, "mods");
     const QString pu = m_settings.plutoniumInstance;
     const QString gameFolder = m_settings.gameFolder(m_settings.modId);
 
@@ -427,79 +633,25 @@ void ModsPage::installStandardOrSmart(const QString &archivePath)
         return;
     }
 
-    QMessageBox box(this);
-    box.setWindowTitle(tr("Instalar mod"));
-    box.setText(tr("Sera criado um checkpoint desta instalacao.\n\n"
-                   "Se o pacote tiver storage/ e steam/:\n"
-                   "• storage/ → pasta Plutonium\n"
-                   "• steam/ → pasta do jogo\n\n"
-                   "Ao excluir o mod, os arquivos novos saem e os que foram\n"
-                   "substituidos voltam ao original. O backup do checkpoint\n"
-                   "e apagado em seguida."));
-    auto *okBtn = box.addButton(tr("Instalar"), QMessageBox::AcceptRole);
-    box.addButton(tr("Cancelar"), QMessageBox::RejectRole);
-    box.exec();
-    if (box.clickedButton() != okBtn)
-        return;
-
-    m_job = Job::Install;
     setBusy(true);
     m_progress->setVisible(true);
     m_progressLabel->setVisible(true);
     m_progress->setRange(0, 0);
-    m_progressLabel->setText(tr("Extraindo pacote..."));
 
-    auto future = QtConcurrent::run([=]() -> QString {
-        const QString tempDir = QDir::temp().filePath("LanLauncher_mod_extract");
-        QDir(tempDir).removeRecursively();
-        QDir().mkpath(tempDir);
-
-        QString extractError;
-        if (!ArchiveTool::extractToDirectory(archivePath, tempDir, &extractError)) {
-            QDir(tempDir).removeRecursively();
-            return extractError.isEmpty() ? QObject::tr("Falha ao extrair o arquivo.") : extractError;
-        }
-
-        auto plan = SmartModInstaller::analyzeExtractedRoot(tempDir);
-        if (plan.isSmart) {
-            QString warning;
-            QString modHint = plan.suggestedModId;
-            if (modHint.isEmpty())
-                modHint = QFileInfo(archivePath).completeBaseName();
-            const QString err = SmartModInstaller::applyPlan(
-                plan, tempDir, pu, gameFolder, modHint, archivePath, &warning);
-            QDir(tempDir).removeRecursively();
-            return err;
-        }
-
-        QDir(tempDir).removeRecursively();
-        if (modsPath.isEmpty())
-            return QObject::tr("Selecione um jogo na lista de mods.");
-        QDir().mkpath(modsPath);
-        const auto r = ArchiveTool::extractArchive(modsPath, archivePath);
-        if (r == ArchiveTool::ExtractResult::Success) {
-            const QString gameSid = Storage::gameStorageId(m_settings.modId);
-            QString folderName = QFileInfo(archivePath).completeBaseName();
-            folderName.replace(' ', '_');
-            QString dest = modsPath + "/" + folderName;
-            if (!QDir(dest).exists()) {
-                // extract may have created a folder with the original zip name
-                dest = modsPath + "/" + QFileInfo(archivePath).completeBaseName();
-            }
-            if (QDir(dest).exists())
-                SmartModInstaller::recordStandardInstall(pu, gameSid, dest, QFileInfo(dest).fileName(), archivePath);
-            return QString();
-        }
-        switch (r) {
-        case ArchiveTool::ExtractResult::NotStandardModFormat:
-            return QObject::tr("Este pacote nao e um mod padrao nem um kit storage/steam.");
-        case ArchiveTool::ExtractResult::UnsupportedExtension:
-            return QObject::tr("Extensao nao suportada. Use zip, rar, 7z ou exe.");
-        case ArchiveTool::ExtractResult::SevenZipMissing:
-            return QObject::tr("7-Zip nao encontrado.");
-        default:
-            return QObject::tr("Falha ao instalar o mod no formato padrao.");
-        }
+    m_pendingArchive = archivePath;
+    m_pendingExtract = QDir::temp().filePath("LanLauncher_mod_extract");
+    const QString gameId = m_settings.modId;
+    const QString gameCode = Storage::gameStorageId(m_settings.modId);
+    m_job = Job::Peek;
+    m_progressLabel->setText(tr("Lendo pacote..."));
+    auto future = QtConcurrent::run([this, archivePath, gameId, gameCode, pu, gameFolder]() -> QString {
+        const auto preview = ModPreview::analyzeArchive(archivePath, gameId, gameCode, pu, gameFolder);
+        QMetaObject::invokeMethod(this, [this, preview]() {
+            m_pendingPreview = preview;
+        }, Qt::BlockingQueuedConnection);
+        if (!preview.valid())
+            return preview.error.isEmpty() ? QObject::tr("Nao foi possivel projetar a instalacao deste pacote.") : preview.error;
+        return QStringLiteral("__PEEK_OK__");
     });
     m_installWatcher.setFuture(future);
 }
@@ -601,10 +753,10 @@ void ModsPage::retranslate()
     if (auto *w = findChild<QLabel*>("modsInstallKicker")) w->setText(tr("INSTALAR"));
     if (auto *w = findChild<QLabel*>("modsInstallTitle")) w->setText(tr("Adicionar mod ou mapa"));
     if (auto *w = findChild<QLabel*>("modsInstallDesc"))
-        w->setText(tr("Zip, Rar, 7z, exe ou .cll — arraste um pack CLL aqui."));
+        w->setText(tr("Zip, Rar, 7z, exe, .cll ou link do GitHub — Drop a mod file here."));
     if (auto *w = findChild<QPushButton*>("modsBrowse")) w->setText(tr("Procurar"));
     if (m_installBtn) m_installBtn->setText(tr("Instalar mod"));
-    if (m_modPathEdit) m_modPathEdit->setPlaceholderText(tr("Caminho do arquivo do mod"));
+    if (m_modPathEdit) m_modPathEdit->setPlaceholderText(tr("Arquivo do mod ou link do GitHub"));
     if (m_gameCombo && !m_gameCombo->currentText().isEmpty())
         m_titleLabel->setText(tr("Mods disponiveis para %1").arg(m_gameCombo->currentText()));
     else if (m_titleLabel)

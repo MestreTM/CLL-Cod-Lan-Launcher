@@ -186,6 +186,47 @@ QStringList listEntries(const QString &archivePath)
     return out;
 }
 
+
+QList<ListedFile> listDetailed(const QString &archivePath)
+{
+    QList<ListedFile> out;
+    const QString sevenZip = findSevenZip();
+    if (sevenZip.isEmpty() || !QFileInfo::exists(archivePath))
+        return out;
+    QProcess proc;
+    proc.start(sevenZip, {"l", "-slt",
+                          QDir::toNativeSeparators(QFileInfo(archivePath).absoluteFilePath())});
+    if (!proc.waitForStarted(8000))
+        return out;
+    proc.waitForFinished(-1);
+    const QString text = QString::fromLocal8Bit(proc.readAllStandardOutput());
+    ListedFile cur;
+    auto flush = [&]() {
+        if (cur.path.isEmpty())
+            return;
+        cur.path.replace(QLatin1Char('\\'), QLatin1Char('/'));
+        while (cur.path.startsWith(QLatin1Char('/')))
+            cur.path.remove(0, 1);
+        out.push_back(cur);
+        cur = ListedFile();
+    };
+    for (QString line : text.split(QLatin1Char('\n'))) {
+        line = line.trimmed();
+        if (line.isEmpty()) {
+            flush();
+            continue;
+        }
+        if (line.startsWith(QLatin1String("Path = ")))
+            cur.path = line.mid(7).trimmed();
+        else if (line.startsWith(QLatin1String("Size = ")))
+            cur.size = line.mid(7).trimmed().toLongLong();
+        else if (line.startsWith(QLatin1String("Attributes = ")))
+            cur.isDir = line.contains(QLatin1Char('D'));
+    }
+    flush();
+    return out;
+}
+
 bool extractPaths(const QString &archivePath, const QString &destDir,
                   const QStringList &innerPaths, QString *errorOut)
 {

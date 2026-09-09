@@ -5,6 +5,7 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QComboBox;
+class QCheckBox;
 class AppSettings;
 
 class SettingsPage : public QWidget
@@ -17,6 +18,7 @@ public:
 
 signals:
     void plutoniumFolderChanged();
+    void homeEnabledChanged(bool enabled);
 
 private:
     QLineEdit *folderRow(class QVBoxLayout *layout, const QString &label,
@@ -29,4 +31,5 @@ private:
     QPushButton *m_kitBtn = nullptr;
     QLabel *m_kitHint = nullptr;
     QComboBox *m_langCombo = nullptr;
+    QCheckBox *m_homeEnabled = nullptr;
 };

@@ -13,6 +13,7 @@ class ModsPage;
 class ServerPage;
 class SettingsPage;
 class AboutPage;
+class HomePage;
 
 class MainWindow : public QMainWindow
 {
@@ -30,7 +31,7 @@ private slots:
     void onPollRunningProcess();
 
 private:
-    enum ToolIndex { ToolPlay = 0, ToolMods, ToolServer, ToolSettings, ToolAbout };
+    enum ToolIndex { ToolPlay = 0, ToolHome, ToolMods, ToolServer, ToolSettings, ToolAbout };
 
     QWidget *buildSidebar();
     QWidget *buildHeader();
@@ -38,11 +39,13 @@ private:
     void showTool(int toolIndex);
     void syncNav();
     void applyHeader(int toolIndex);
+    void applyHomeVisibility();
     void retranslate();
 
     AppSettings m_settings;
     QStackedWidget *m_stack = nullptr;
     PlayPage *m_playPage = nullptr;
+    HomePage *m_homePage = nullptr;
     ModsPage *m_modsPage = nullptr;
     ServerPage *m_serverPage = nullptr;
     SettingsPage *m_settingsPage = nullptr;
@@ -56,6 +59,7 @@ private:
     QLabel *m_sidebarGames = nullptr;
     QLabel *m_sidebarTools = nullptr;
 
+    QPushButton *m_homeNavBtn = nullptr;
     QList<QPushButton *> m_gameButtons;
     QList<QPushButton *> m_toolButtons;
     int m_gameIndex = 2; // BO2

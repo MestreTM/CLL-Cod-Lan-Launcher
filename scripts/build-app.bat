@@ -46,18 +46,18 @@ if errorlevel 1 exit /b 1
 cmake --build "%BUILD_DIR%" --parallel
 if errorlevel 1 exit /b 1
 
-if not exist "%BUILD_DIR%\LanLauncherQt.exe" (
-    echo [ERROR] LanLauncherQt.exe was not produced
+if not exist "%BUILD_DIR%\CodLanLaucher.exe" (
+    echo [ERROR] CodLanLaucher.exe was not produced
     dir /s /b "%BUILD_DIR%\*.exe"
     exit /b 1
 )
 
 if exist "%DIST%" rmdir /s /q "%DIST%"
 mkdir "%DIST%"
-copy /y "%BUILD_DIR%\LanLauncherQt.exe" "%DIST%\LanLauncherQt.exe" >nul
+copy /y "%BUILD_DIR%\CodLanLaucher.exe" "%DIST%\CodLanLaucher.exe" >nul
 
 echo.
-echo Done: %CD%\%DIST%\LanLauncherQt.exe
+echo Done: %CD%\%DIST%\CodLanLaucher.exe
 dir /b "%DIST%"
 echo.
 exit /b 0

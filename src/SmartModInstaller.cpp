@@ -96,6 +96,76 @@ bool copyOneFile(const QString &src, const QString &dst, QString &error)
     return true;
 }
 
+
+QString sharedRoot(const QString &pu)
+{
+    return QDir(pu).filePath(".lanlauncher_checkpoints/_shared");
+}
+
+QJsonObject loadIndex(const QString &pu)
+{
+    QFile f(sharedRoot(pu) + "/index.json");
+    if (!f.open(QIODevice::ReadOnly))
+        return {};
+    return QJsonDocument::fromJson(f.readAll()).object();
+}
+
+bool saveIndex(const QString &pu, const QJsonObject &obj)
+{
+    QDir().mkpath(sharedRoot(pu));
+    QFile f(sharedRoot(pu) + "/index.json");
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return false;
+    f.write(QJsonDocument(obj).toJson(QJsonDocument::Indented));
+    return true;
+}
+
+QString storeKey(const QString &tag, const QString &rel)
+{
+    return tag + "/" + QString(rel).replace('\\', '/');
+}
+
+QString sharedFilePath(const QString &pu, const QString &tag, const QString &rel)
+{
+    return sharedRoot(pu) + "/files/" + tag + "/" + rel;
+}
+
+void addOwner(QJsonObject &index, const QString &key, const QString &modId)
+{
+    QJsonObject e = index.value(key).toObject();
+    QJsonArray owners = e.value("owners").toArray();
+    bool found = false;
+    for (const QJsonValue &v : owners) {
+        if (v.toString() == modId)
+            found = true;
+    }
+    if (!found)
+        owners.append(modId);
+    e.insert("owners", owners);
+    index.insert(key, e);
+}
+
+QStringList takeOwner(QJsonObject &index, const QString &key, const QString &modId)
+{
+    QJsonObject e = index.value(key).toObject();
+    QJsonArray owners = e.value("owners").toArray();
+    QJsonArray keep;
+    QStringList rest;
+    for (const QJsonValue &v : owners) {
+        if (v.toString() != modId) {
+            keep.append(v);
+            rest << v.toString();
+        }
+    }
+    if (keep.isEmpty())
+        index.remove(key);
+    else {
+        e.insert("owners", keep);
+        index.insert(key, e);
+    }
+    return rest;
+}
+
 struct CopyReport {
     QStringList added;
     QStringList replaced;
@@ -183,6 +253,7 @@ QString writeManifest(const QString &dir,
     QDir().mkpath(dir);
     QJsonObject root;
     root.insert(QStringLiteral("id"), modId);
+    root.insert(QStringLiteral("displayName"), modId);
     root.insert(QStringLiteral("game"), gameId);
     root.insert(QStringLiteral("created"), QDateTime::currentDateTime().toString(Qt::ISODate));
     root.insert(QStringLiteral("archive"), archivePath);
@@ -239,6 +310,10 @@ void removeEmptyParents(const QString &filePath, const QString &stopAt)
 } // namespace
 
 namespace SmartModInstaller {
+
+QString modsRootPath(const QString &plutoniumRoot, const QString &gameStorageId);
+QString pickFsGameFolder(const QString &modsRoot, const QStringList &candidates, const QString &fallbackId);
+void writeFsGameFields(const QString &ckptDir, const QStringList &folders, const QString &fsGame);
 
 Plan analyzeExtractedRoot(const QString &extractedRoot)
 {
@@ -344,6 +419,9 @@ QString applyPlan(const Plan &plan,
                                        gameReport.added, gameReport.replaced);
     if (!werr.isEmpty())
         return werr;
+    const QStringList owned = checkpointOwnedModFolders(pu, gameId, modId);
+    const QString fsGame = pickFsGameFolder(modsRootPath(pu, gameId), owned, QString());
+    writeFsGameFields(ckpt, owned, fsGame);
 
     if (warningOut)
         *warningOut = warnings.join('\n');
@@ -370,7 +448,11 @@ QString recordStandardInstall(const QString &plutoniumRoot,
     for (const QString &rel : files)
         added << (gameStorageId + "/mods/" + modId + "/" + rel);
 
-    return writeManifest(ckpt, modId, gameStorageId, archivePath, added, {}, {}, {});
+    const QString werr = writeManifest(ckpt, modId, gameStorageId, archivePath, added, {}, {}, {});
+    if (!werr.isEmpty())
+        return werr;
+    writeFsGameFields(ckpt, QStringList{modId}, modId);
+    return QString();
 }
 
 bool hasCheckpoint(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId)
@@ -406,6 +488,102 @@ QString checkpointDisplayName(const QString &plutoniumRoot, const QString &gameS
     return alt.isEmpty() ? modId : alt;
 }
 
+QString modsRootPath(const QString &plutoniumRoot, const QString &gameStorageId)
+{
+    return QDir(plutoniumRoot).filePath("storage/" + gameStorageId + "/mods");
+}
+
+bool folderHasModContent(const QString &folderAbs)
+{
+    QDir d(folderAbs);
+    if (!d.exists())
+        return false;
+    if (QFileInfo::exists(folderAbs + "/mod.json"))
+        return true;
+    const auto entries = d.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QFileInfo &fi : entries) {
+        if (fi.isFile())
+            return true;
+        if (fi.isDir() && !QDir(fi.absoluteFilePath()).entryList(QDir::AllEntries | QDir::NoDotAndDotDot).isEmpty())
+            return true;
+    }
+    return false;
+}
+
+int fsGameScore(const QString &modsRoot, const QString &folder)
+{
+    if (folder.isEmpty() || folder.contains(QLatin1Char('/')) || folder.contains(QLatin1Char('\\')))
+        return -1;
+    const QString path = modsRoot + "/" + folder;
+    if (!QDir(path).exists())
+        return -1;
+    int s = 1;
+    if (folderHasModContent(path))
+        s += 8;
+    if (QFileInfo::exists(path + "/mod.json"))
+        s += 10;
+    const QString low = folder.toLower();
+    if (low.startsWith(QLatin1String("dlc")))
+        s += 4;
+    return s;
+}
+
+QString pickFsGameFolder(const QString &modsRoot, const QStringList &candidates, const QString &fallbackId)
+{
+    QStringList all;
+    for (const QString &c : candidates) {
+        const QString folder = QString(c).trimmed();
+        if (folder.isEmpty())
+            continue;
+        bool seen = false;
+        for (const QString &e : all) {
+            if (e.compare(folder, Qt::CaseInsensitive) == 0)
+                seen = true;
+        }
+        if (!seen)
+            all << folder;
+    }
+    if (!fallbackId.isEmpty()) {
+        bool seen = false;
+        for (const QString &e : all) {
+            if (e.compare(fallbackId, Qt::CaseInsensitive) == 0)
+                seen = true;
+        }
+        if (!seen)
+            all << fallbackId;
+    }
+
+    QString best;
+    int bestScore = -1;
+    for (const QString &folder : all) {
+        const int s = fsGameScore(modsRoot, folder);
+        if (s > bestScore) {
+            bestScore = s;
+            best = folder;
+        }
+    }
+    if (bestScore >= 0)
+        return best;
+    return QString();
+}
+
+void writeFsGameFields(const QString &ckptDir, const QStringList &folders, const QString &fsGame)
+{
+    QFile f(ckptDir + "/manifest.json");
+    if (!f.open(QIODevice::ReadOnly))
+        return;
+    QJsonObject o = QJsonDocument::fromJson(f.readAll()).object();
+    f.close();
+    QJsonArray arr;
+    for (const QString &folder : folders)
+        arr.append(folder);
+    o.insert(QStringLiteral("modFolders"), arr);
+    if (!fsGame.isEmpty())
+        o.insert(QStringLiteral("fsGame"), fsGame);
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        f.write(QJsonDocument(o).toJson(QJsonDocument::Indented));
+}
+
 QStringList checkpointOwnedModFolders(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId)
 {
     const QJsonObject o = readCheckpointManifest(plutoniumRoot, gameStorageId, modId);
@@ -437,6 +615,40 @@ QStringList checkpointOwnedModFolders(const QString &plutoniumRoot, const QStrin
     return owned;
 }
 
+QString resolveFsGameFolder(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId)
+{
+    if (plutoniumRoot.isEmpty() || gameStorageId.isEmpty() || modId.isEmpty())
+        return QString();
+
+    const QString modsRoot = modsRootPath(plutoniumRoot, gameStorageId);
+    const QJsonObject man = readCheckpointManifest(plutoniumRoot, gameStorageId, modId);
+    QStringList candidates;
+    const QString stored = man.value(QStringLiteral("fsGame")).toString().trimmed();
+    if (!stored.isEmpty())
+        candidates << stored;
+    candidates.append(checkpointOwnedModFolders(plutoniumRoot, gameStorageId, modId));
+
+    QString picked = pickFsGameFolder(modsRoot, candidates, hasCheckpoint(plutoniumRoot, gameStorageId, modId) ? QString() : modId);
+    if (picked.isEmpty() && folderHasModContent(modsRoot + "/" + modId))
+        picked = modId;
+    return picked;
+}
+
+void cleanupEmptyAliasFolder(const QString &plutoniumRoot, const QString &gameStorageId, const QString &modId)
+{
+    if (plutoniumRoot.isEmpty() || gameStorageId.isEmpty() || modId.isEmpty())
+        return;
+    const QString realFolder = resolveFsGameFolder(plutoniumRoot, gameStorageId, modId);
+    if (realFolder.isEmpty() || realFolder.compare(modId, Qt::CaseInsensitive) == 0)
+        return;
+    const QString alias = modsRootPath(plutoniumRoot, gameStorageId) + "/" + modId;
+    if (!QDir(alias).exists())
+        return;
+    if (folderHasModContent(alias))
+        return;
+    QDir(alias).removeRecursively();
+}
+
 QString rollback(const QString &plutoniumRoot,
                  const QString &gameRoot,
                  const QString &gameStorageId,
@@ -462,13 +674,22 @@ QString rollback(const QString &plutoniumRoot,
             const QString tag = o.value(QStringLiteral("root")).toString();
             const QString rel = o.value(QStringLiteral("rel")).toString();
             const QString dst = destFor(tag, rel, plutoniumRoot, gameRoot);
-            const QString bak = backupDir + "/" + tag + "/" + rel;
-            if (!QFileInfo::exists(bak))
-                continue;
             if (tag == QLatin1String("game") && gameRoot.isEmpty())
+                continue;
+            QString bak = backupDir + "/" + tag + "/" + rel;
+            if (!QFileInfo::exists(bak))
+                bak = sharedFilePath(plutoniumRoot, tag, rel);
+            QJsonObject idx = loadIndex(plutoniumRoot);
+            const QString key = storeKey(tag, rel);
+            const QStringList rest = takeOwner(idx, key, modId);
+            saveIndex(plutoniumRoot, idx);
+            if (!rest.isEmpty())
+                continue;
+            if (!QFileInfo::exists(bak))
                 continue;
             if (!copyOneFile(bak, dst, error))
                 return false;
+            forceRemove(bak);
         }
         return true;
     };
@@ -493,6 +714,88 @@ QString rollback(const QString &plutoniumRoot,
     removeAdded(root.value(QStringLiteral("added")).toArray());
 
     QDir(ckpt).removeRecursively();
+    return QString();
+}
+
+
+QString applyMappings(const QList<Mapping> &maps,
+                      const QString &plutoniumRoot,
+                      const QString &gameRoot,
+                      const QString &gameStorageId,
+                      const QString &modId,
+                      const QString &displayName,
+                      const QString &archivePath,
+                      bool makeBackup)
+{
+    if (plutoniumRoot.isEmpty())
+        return QObject::tr("Pasta do Plutonium nao configurada.");
+    const QString pu = QDir::cleanPath(QFileInfo(plutoniumRoot).absoluteFilePath());
+    const QString gameAbs = gameRoot.isEmpty() ? QString()
+                                               : QDir::cleanPath(QFileInfo(gameRoot).absoluteFilePath());
+    const QString ckpt = checkpointDir(pu, gameStorageId, modId);
+    if (QDir(ckpt).exists())
+        QDir(ckpt).removeRecursively();
+    QDir().mkpath(ckpt);
+
+    QJsonObject index = loadIndex(pu);
+    QString error;
+    QStringList addedPu, replacedPu, addedGame, replacedGame;
+
+    for (const Mapping &map : maps) {
+        const QString dstBase = (map.destRootTag == QLatin1String("game") ? gameAbs : pu)
+                                + (map.destRel.isEmpty() ? QString() : ("/" + map.destRel));
+        if (map.destRootTag == QLatin1String("game") && gameAbs.isEmpty())
+            continue;
+        QStringList files;
+        collectFiles(map.srcAbs, QString(), files);
+        for (const QString &rel : files) {
+            const QString src = map.srcAbs + "/" + rel;
+            const QString destRel = map.destRel.isEmpty() ? rel : (map.destRel + "/" + rel);
+            const QString dst = (map.destRootTag == QLatin1String("game") ? gameAbs : pu) + "/" + destRel;
+            const QString tag = map.destRootTag;
+            if (QFileInfo::exists(dst)) {
+                if (makeBackup) {
+                    const QString key = storeKey(tag, destRel);
+                    const QString store = sharedFilePath(pu, tag, destRel);
+                    if (!QFileInfo::exists(store)) {
+                        QDir().mkpath(QFileInfo(store).absolutePath());
+                        if (!copyOneFile(dst, store, error))
+                            return error;
+                    }
+                    addOwner(index, key, modId);
+                }
+                if (tag == QLatin1String("game"))
+                    replacedGame << destRel;
+                else
+                    replacedPu << destRel;
+            } else {
+                if (tag == QLatin1String("game"))
+                    addedGame << destRel;
+                else
+                    addedPu << destRel;
+            }
+            if (!copyOneFile(src, dst, error))
+                return error;
+        }
+    }
+    saveIndex(pu, index);
+    QString werr = writeManifest(ckpt, modId, gameStorageId, archivePath,
+                                 addedPu, replacedPu, addedGame, replacedGame);
+    if (!werr.isEmpty())
+        return werr;
+    QFile f(ckpt + "/manifest.json");
+    if (f.open(QIODevice::ReadOnly)) {
+        QJsonObject o = QJsonDocument::fromJson(f.readAll()).object();
+        f.close();
+        if (!displayName.isEmpty())
+            o.insert("displayName", displayName);
+        o.insert("sharedBackup", makeBackup);
+        if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            f.write(QJsonDocument(o).toJson(QJsonDocument::Indented));
+    }
+    const QStringList owned = checkpointOwnedModFolders(pu, gameStorageId, modId);
+    const QString fsGame = pickFsGameFolder(modsRootPath(pu, gameStorageId), owned, QString());
+    writeFsGameFields(ckpt, owned, fsGame);
     return QString();
 }
 

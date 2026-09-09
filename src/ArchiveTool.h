@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
 #include <QStringList>
+#include <QList>
 #include <functional>
 
 namespace ArchiveTool
@@ -22,6 +23,13 @@ namespace ArchiveTool
     bool extractToDirectory(const QString &archivePath, const QString &destDir, QString *errorOut = nullptr,
                            const std::function<void(int percent)> &onProgress = nullptr);
     QStringList listEntries(const QString &archivePath);
+
+    struct ListedFile {
+        QString path;
+        qint64 size = 0;
+        bool isDir = false;
+    };
+    QList<ListedFile> listDetailed(const QString &archivePath);
     bool extractPaths(const QString &archivePath, const QString &destDir,
                       const QStringList &innerPaths, QString *errorOut = nullptr);
 
