@@ -1,0 +1,948 @@
+{
+  "source": "https://mestretm.github.io/CLL-Cod-Lan-Launcher/cll_update.json",
+  "items": [
+    {
+      "id": "launcher",
+      "name": "CodLanLauncher.exe",
+      "repo": "MestreTM/CLL-Cod-Lan-Launcher",
+      "version": "v1.1.0",
+      "url": "https://github.com/MestreTM/CLL-Cod-Lan-Launcher/releases/latest/download/CodLanLauncher.exe",
+      "md5": "86a39163d11bc80bdd8f56ab68a0266b",
+      "size": 55109326
+    },
+    {
+      "id": "pu",
+      "name": "pu.dat",
+      "repo": "MestreTM/CLL-Cod-Lan-Launcher",
+      "version": "v0.1",
+      "url": "https://github.com/MestreTM/CLL-Cod-Lan-Launcher/releases/download/v0.1/pu.dat",
+      "md5": "aeaf692bec69df0d14c065a23717df72",
+      "size": 404104139
+    },
+    {
+      "id": "t7-cll",
+      "name": "t7_cll.zip",
+      "repo": "MestreTM/t7-cll",
+      "version": "v1.0.0",
+      "url": "https://github.com/MestreTM/t7-cll/releases/latest/download/t7_cll.zip",
+      "md5": "123d84bdcf27897ebcfff513b421fe79",
+      "size": 6302923,
+      "files": [
+        {
+          "path": "boiii/data/gamesettings/mp/gamesettings_escort.cfg",
+          "md5": "2cb839febbc0bc3b738b61e5fb011dde",
+          "size": 1179
+        },
+        {
+          "path": "boiii/data/launcher/bigboiii.jpg",
+          "md5": "774312c25b806cf725bff8ba5e3b4e8a",
+          "size": 1226999
+        },
+        {
+          "path": "boiii/data/launcher/main.css",
+          "md5": "53507d6bb8f489b9c42eae46ebaa1386",
+          "size": 75963
+        },
+        {
+          "path": "boiii/data/launcher/main.html",
+          "md5": "7b7d413a9d0e8fae80aa49bc82723903",
+          "size": 129937
+        },
+        {
+          "path": "boiii/data/launcher/main.js",
+          "md5": "8745c6ddd85fac8baf5df1c33a025e58",
+          "size": 153989
+        },
+        {
+          "path": "boiii/data/launcher/verification.json",
+          "md5": "f791c2f1370bec78a98f362ca7a5a51f",
+          "size": 134912
+        },
+        {
+          "path": "boiii/data/lookup_tables/dvar_list.txt",
+          "md5": "6be93f38e3bebe2cf5a6489e72f9eaef",
+          "size": 173189
+        },
+        {
+          "path": "boiii/data/lookup_tables/hash_names.txt",
+          "md5": "d7696a83e89dea3cc449e24ea6f0b079",
+          "size": 4784646
+        },
+        {
+          "path": "boiii/data/scripts/cp/cp_mi_cairo_aquifer.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/cp_mi_eth_prologue.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/cp_mi_sing_vengeance.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/cybercom/_cybercom.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/cybercom/_cybercom_gadget_firefly.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/cybercom/_cybercom_gadget_security_breach.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/cp/doa/_doa.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/mp/_bonuscard.gsh",
+          "md5": "fda33added661bfe0347a0e60127ba3e",
+          "size": 389
+        },
+        {
+          "path": "boiii/data/scripts/mp/_contracts.gsh",
+          "md5": "b3e1736c117f9ed8b85c3714db0d0121",
+          "size": 514
+        },
+        {
+          "path": "boiii/data/scripts/mp/_destructible.gsh",
+          "md5": "81a2f8d8f3c5f1e3fd139f813d5f24ef",
+          "size": 111
+        },
+        {
+          "path": "boiii/data/scripts/mp/_hacker_tool.gsh",
+          "md5": "3ee8c6e1eb6e9fecd4408963159dc968",
+          "size": 94
+        },
+        {
+          "path": "boiii/data/scripts/mp/_pickup_items.gsh",
+          "md5": "9469cdc0cdc47dd2e0b6ab4383ce280d",
+          "size": 898
+        },
+        {
+          "path": "boiii/data/scripts/mp/_statstable.gsh",
+          "md5": "a04164ae740fdfd0e8b078bc5b1e878f",
+          "size": 1551
+        },
+        {
+          "path": "boiii/data/scripts/mp/_teamops.gsh",
+          "md5": "05534004e5d9e43f72cc056ba5100a5f",
+          "size": 363
+        },
+        {
+          "path": "boiii/data/scripts/mp/bots/_bot.gsc",
+          "md5": "25e5d03edf25fd683f11e8820d52b8b2",
+          "size": 20659
+        },
+        {
+          "path": "boiii/data/scripts/mp/bots/_bot.gsh",
+          "md5": "80d4c2d5585471eef43e3499b021cdd5",
+          "size": 1690
+        },
+        {
+          "path": "boiii/data/scripts/mp/bots/_bot_loadout.gsc",
+          "md5": "64d3d6cf2163fb3b8a2c2d3d247ee05c",
+          "size": 19931
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/_globallogic.gsh",
+          "md5": "bc3155fae283d83546ce3edd360c235a",
+          "size": 341
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/_serversettings.gsc",
+          "md5": "47c829a88b1ca69ab95f7080154ce7bc",
+          "size": 4935
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/_spawning.gsh",
+          "md5": "d104716fb7182439401000250cc185ad",
+          "size": 45
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/clean.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/fr.gsh",
+          "md5": "4e8f9cce50dfead123dd2cbfbf09495e",
+          "size": 278
+        },
+        {
+          "path": "boiii/data/scripts/mp/gametypes/prop.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/mp/killstreaks/_killstreaks.gsh",
+          "md5": "a12b4cf35fafb18ccbd80b9e0c55273c",
+          "size": 18129
+        },
+        {
+          "path": "boiii/data/scripts/mp/killstreaks/_remote_weapons.gsh",
+          "md5": "ce841ee5ef07ef3dad00ddb9219ac316",
+          "size": 42
+        },
+        {
+          "path": "boiii/data/scripts/mp/mp.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/mp/mp_arena_sound.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/mp/mp_nuketown_x_ph.gsh",
+          "md5": "5dc38a4e9b026ee10a4766307d7d3ae0",
+          "size": 403
+        },
+        {
+          "path": "boiii/data/scripts/mp/teams/_teams.gsc",
+          "md5": "81489c4e39434bb2b5c088d3ed8a93f6",
+          "size": 12284
+        },
+        {
+          "path": "boiii/data/scripts/mp/teams/_teams.gsc_raw",
+          "md5": "cf72c77cf3dced36a7b6516ffc24db6d",
+          "size": 14490
+        },
+        {
+          "path": "boiii/data/scripts/shared/aat_shared.gsh",
+          "md5": "b2009c46ed233eab02bcff469ef8e7e1",
+          "size": 111
+        },
+        {
+          "path": "boiii/data/scripts/shared/aat_zm.gsh",
+          "md5": "b543ef179b7e37c7d760aacbef2c3f27",
+          "size": 309
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/_ability_util.gsh",
+          "md5": "d9839d0e350a765bc78befc583e6ad6d",
+          "size": 3302
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_flashback.gsh",
+          "md5": "bd6f9c7e4afbc661d82bc7abf3e9fd2d",
+          "size": 39
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_heat_wave.gsh",
+          "md5": "a877f26a9f8d93e5d8075361a5eb0d80",
+          "size": 1374
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_overdrive.gsh",
+          "md5": "58fd4c984d775348688a16c38143474f",
+          "size": 612
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_resurrect.gsh",
+          "md5": "f5c67734ad20242b9b8cc3dc5f277977",
+          "size": 2644
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_speed_burst.gsh",
+          "md5": "a738ce7b230199cbdde3cf24e558faf0",
+          "size": 601
+        },
+        {
+          "path": "boiii/data/scripts/shared/abilities/gadgets/_gadget_vision_pulse.gsh",
+          "md5": "9076823463779148ed281c8a3380b6b8",
+          "size": 2729
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/aivsaimelee.gsh",
+          "md5": "b3881561f41462f50bdde6cbd63dc566",
+          "size": 650
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_apothicon_fury.gsh",
+          "md5": "2444469752630a309e76f140ef4934e9",
+          "size": 3449
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_clone.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_damage_effects.gsh",
+          "md5": "4c039126c4aa6c944cfb08850b1db1c3",
+          "size": 211
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_direwolf.gsh",
+          "md5": "862bf61f34cbb023c47931de58ac0c2d",
+          "size": 687
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_human_riotshield.gsh",
+          "md5": "d907da95c23301df0e441c1158379af8",
+          "size": 714
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_robot.gsh",
+          "md5": "a5eee98ede0bdcda44700a47a1a5b4ce",
+          "size": 7565
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/archetype_thrasher.gsh",
+          "md5": "c0e5c95d491187d473a2848bf12c5eb4",
+          "size": 9515
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/margwa.gsh",
+          "md5": "b2ac8f5902e4af83609ad692a47ffb6c",
+          "size": 8086
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/mechz.gsh",
+          "md5": "dd7327f87cc36dc565a61e0a9ea5508d",
+          "size": 6551
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/phalanx.gsh",
+          "md5": "770daef8a9d103f23f28facf08a4e51e",
+          "size": 3426
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/raz.gsh",
+          "md5": "7338035526ff4726c4a0921279301ec7",
+          "size": 8850
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/robot_phalanx.gsh",
+          "md5": "ca216339d7bcc27b58de200065f99d0b",
+          "size": 3068
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/skeleton.gsh",
+          "md5": "ac6729d8352b20212745db1ef4974022",
+          "size": 801
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/animation_selector_table.gsh",
+          "md5": "b284c8b522fcfc86b8bfbfad4c371fe2",
+          "size": 122
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/animation_state_machine.gsh",
+          "md5": "ccdfbada7249d895c98385f76121bbf0",
+          "size": 4226
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/behavior.gsh",
+          "md5": "18d43f981f3d03df70d82dae5435f129",
+          "size": 4533
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/behavior_state_machine.gsh",
+          "md5": "c913ab9af890a85bcb75474fa95f87e3",
+          "size": 809
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/behavior_tree.gsh",
+          "md5": "a2f9cf5a4ca769e6326f853ef8febedb",
+          "size": 461
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/blackboard.gsh",
+          "md5": "5df7223e198f114d22ce4b44f4a9df27",
+          "size": 17448
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/destructible_character.gsh",
+          "md5": "afc24a1b86d7c42c8b461cfa83bdee7f",
+          "size": 1426
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/fx_character.gsh",
+          "md5": "bad2c887284447b46ea1a4bf84b9a576",
+          "size": 181
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/systems/gib.gsh",
+          "md5": "ae229f7be20da548c4685ea2270f9069",
+          "size": 3010
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/utility.gsh",
+          "md5": "36a1289d90dda96e210f51632f1103e3",
+          "size": 1778
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/warlord.gsh",
+          "md5": "7de7e39f7017d791aebf3d6fc7b649a2",
+          "size": 6955
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/zombie.gsh",
+          "md5": "df6954f9f173ec46245c4c71af6fe938",
+          "size": 1658
+        },
+        {
+          "path": "boiii/data/scripts/shared/ai/zombie_vortex.gsh",
+          "md5": "60bfed850be3307c044a9d4386d55d59",
+          "size": 1475
+        },
+        {
+          "path": "boiii/data/scripts/shared/archetype_shared/archetype_shared.gsh",
+          "md5": "625b6d3a0079a8bc2d43bb3446386735",
+          "size": 2634
+        },
+        {
+          "path": "boiii/data/scripts/shared/bots/_bot.gsh",
+          "md5": "80d4c2d5585471eef43e3499b021cdd5",
+          "size": 1690
+        },
+        {
+          "path": "boiii/data/scripts/shared/clientfields.gsh",
+          "md5": "549dd04e0216ebb9cdb5e43144bc84ee",
+          "size": 643
+        },
+        {
+          "path": "boiii/data/scripts/shared/drown.gsh",
+          "md5": "f9ade4f29cd155d18ee786d9066fc076",
+          "size": 948
+        },
+        {
+          "path": "boiii/data/scripts/shared/duplicaterender.gsh",
+          "md5": "52cceaae48151b47bc01819f32706842",
+          "size": 395
+        },
+        {
+          "path": "boiii/data/scripts/shared/scoreevents_shared.gsh",
+          "md5": "da3ebf427cbe637ef5d26dc36f01220e",
+          "size": 1269
+        },
+        {
+          "path": "boiii/data/scripts/shared/shared.gsh",
+          "md5": "741ba26b77986d143830259095219d1d",
+          "size": 52102
+        },
+        {
+          "path": "boiii/data/scripts/shared/statemachine.gsh",
+          "md5": "df57b85adeebd8d7c042bbd3f449362d",
+          "size": 108
+        },
+        {
+          "path": "boiii/data/scripts/shared/statstable_shared.gsh",
+          "md5": "f59ac6a45346ee869d5602d726d17321",
+          "size": 1710
+        },
+        {
+          "path": "boiii/data/scripts/shared/stealth.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/shared/vehicles/_glaive.gsh",
+          "md5": "51b0979de43a659ccd5ed72d426a8eda",
+          "size": 608
+        },
+        {
+          "path": "boiii/data/scripts/shared/vehicles/_sentinel_drone.gsh",
+          "md5": "56bdb9eb88c7eede7fa704a665ec2c81",
+          "size": 2733
+        },
+        {
+          "path": "boiii/data/scripts/shared/version.gsh",
+          "md5": "03cb2b159894081e15df5618e24b55ba",
+          "size": 4052
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/_hive_gun.gsh",
+          "md5": "c00d52705ca4aadbda16eb9f313e49a8",
+          "size": 267
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/_lightninggun.gsh",
+          "md5": "f2550780b2251b92fe241febc732a96f",
+          "size": 265
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/_weaponobjects.gsh",
+          "md5": "0070e399a734313b6d299f71203da981",
+          "size": 214
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/antipersonnelguidance.gsh",
+          "md5": "0db89a511e8dd7d67e33d6ed7168fb16",
+          "size": 519
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/grapple.gsh",
+          "md5": "30db4ca7cfadc918cd12787229cd86a1",
+          "size": 181
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/multilockapguidance.gsh",
+          "md5": "0db89a511e8dd7d67e33d6ed7168fb16",
+          "size": 519
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/replay_gun.gsh",
+          "md5": "0ac022d3ba7db63fbbd08a6de9f4b391",
+          "size": 643
+        },
+        {
+          "path": "boiii/data/scripts/shared/weapons/weapon_group_anims.gsh",
+          "md5": "1a10797ffd8845fe6b7952b7f16771d5",
+          "size": 9260
+        },
+        {
+          "path": "boiii/data/scripts/zm/_bonuscard.gsh",
+          "md5": "b5a06ce9266fe1dee24f8b4013e684f3",
+          "size": 307
+        },
+        {
+          "path": "boiii/data/scripts/zm/_destructible.gsh",
+          "md5": "c3e640a52ed766917f4b002603e4affe",
+          "size": 110
+        },
+        {
+          "path": "boiii/data/scripts/zm/_statstable.gsh",
+          "md5": "a04164ae740fdfd0e8b078bc5b1e878f",
+          "size": 1551
+        },
+        {
+          "path": "boiii/data/scripts/zm/_war_perk_return.gsh",
+          "md5": "eb32b708fda553d219792bfb097f71de",
+          "size": 276
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm.gsh",
+          "md5": "c92e6dc611322257b9619e36d351f1cb",
+          "size": 81
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_ai_raps.gsh",
+          "md5": "50934d41b51faaa15c054f5e132feac5",
+          "size": 721
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_ai_spawning.gsh",
+          "md5": "d5e082896b65a44513e6ad3565fc4901",
+          "size": 2873
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_ai_spiders.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_ai_wasp.gsh",
+          "md5": "0cf5b18fb0afb59bce82edbc60c2b2e9",
+          "size": 411
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_attackables.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_audio.gsh",
+          "md5": "a257f27edecaed94786c93db55ac766a",
+          "size": 1513
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_behavior.gsh",
+          "md5": "03bf19280a55cb7bab78100bb2ab652f",
+          "size": 904
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_bgb.gsh",
+          "md5": "03bb13bf9039e193c0908378168bedce",
+          "size": 1398
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_bgb_machine.gsh",
+          "md5": "41277f90d73809b4a6e52237e61e938b",
+          "size": 5597
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_buildables.gsh",
+          "md5": "debf604efab0abe232a86512d272aa12",
+          "size": 2457
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_characters.gsh",
+          "md5": "ee30a61524d9a0006ed62cd8a932e308",
+          "size": 260
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_content.gsh",
+          "md5": "6e2c027b65aeb2634dd4d6ee61eebc9c",
+          "size": 265
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_daily_challenges.gsh",
+          "md5": "fb4b4be47b56c7ab506e8f801f715256",
+          "size": 164
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_laststand.gsh",
+          "md5": "3dff17f6b114d726ffcfb4bba8d835e2",
+          "size": 94
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_lightning_chain.gsh",
+          "md5": "eceb2bc563be104dea726a685d07deab",
+          "size": 105
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_additionalprimaryweapon.gsh",
+          "md5": "a66b8e79fbd6eabfed4a0cfb0f2fcdda",
+          "size": 626
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_deadshot.gsh",
+          "md5": "6b83becb14f1b883281a81129c6522eb",
+          "size": 422
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_death_perception.gsh",
+          "md5": "4b3d96da8f4a6b46f646de5ae372cd26",
+          "size": 1066
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_doubletap2.gsh",
+          "md5": "cfaf7692d4d01d07191e6e939fff10af",
+          "size": 461
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_elemental_pop.gsh",
+          "md5": "83b9c7dbcd9c777eaff6b53670230616",
+          "size": 1297
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_juggernaut.gsh",
+          "md5": "2377283b2ab299b021b017ab24b17964",
+          "size": 434
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_melee_macchiato.gsh",
+          "md5": "d7b40faa103b2bb05edc8e9d43203c5b",
+          "size": 1455
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_phd_flopper.gsh",
+          "md5": "2782ba5ec6085b524ad000ee3f7e14ab",
+          "size": 1625
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_quick_revive.gsh",
+          "md5": "c36fba8d3a093966126bafdbd1e7fabd",
+          "size": 416
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_random.gsh",
+          "md5": "5990763bf969ac05735c498f1e63ebdc",
+          "size": 1502
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_sleight_of_hand.gsh",
+          "md5": "dfc316a64c80e49143c6a7259a4a6e2a",
+          "size": 491
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_staminup.gsh",
+          "md5": "cb8e22f496bb438f39198dd4fa1fa9c0",
+          "size": 514
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_vulture_aid.gsh",
+          "md5": "ceffc3d0751a540a6150c6196b996233",
+          "size": 2638
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_widows_wine.gsh",
+          "md5": "58fe44b909ca8e36f22dfdc160b41f42",
+          "size": 1972
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perk_wisp_tea.gsh",
+          "md5": "f94aba74305afc2b8e8d04bbca4bbbb0",
+          "size": 2025
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_perks.gsh",
+          "md5": "cbac5d3143cd5960b6e004544bff6393",
+          "size": 1905
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_pers_upgrades.gsh",
+          "md5": "d7ac9b01e310f7066e5cfc1beb4b7ceb",
+          "size": 14
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_player.gsh",
+          "md5": "d8d2faf713dd21b13e143ef0feac5b06",
+          "size": 178
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_playerhealth.gsh",
+          "md5": "163bbea81176a15e3414a3b1edaebf6f",
+          "size": 763
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_powerups.gsh",
+          "md5": "6e443aaa0de1a80fdce6046e868abfdb",
+          "size": 1406
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_traps.gsh",
+          "md5": "8d8e9e627671daff4cb5ec59516f332c",
+          "size": 118
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_utility.gsh",
+          "md5": "83d0ab8479c2ab03688fee5950209a46",
+          "size": 3092
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weap_gravityspikes.gsh",
+          "md5": "a553c1381f51c573ff7db0ea4e686df5",
+          "size": 340
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weap_octobomb.gsh",
+          "md5": "50ea5f0e702635b5ed9427773406957e",
+          "size": 1254
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weap_raygun_mark3.gsh",
+          "md5": "41c1b6bf4c7d69a8e894a18da20864e0",
+          "size": 761
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weap_tesla.gsh",
+          "md5": "5ed4218ff73c1f81c05b1b4db97cbda7",
+          "size": 127
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weap_thundergun.gsh",
+          "md5": "405b2c82839f06401537960074432694",
+          "size": 131
+        },
+        {
+          "path": "boiii/data/scripts/zm/_zm_weapons.gsh",
+          "md5": "c7829b417eba0513140b98452410e8b1",
+          "size": 842
+        },
+        {
+          "path": "boiii/data/scripts/zm/aats/_zm_aat_blast_furnace.gsh",
+          "md5": "aa5d8939ce5c7bd1f0ff3283343d304b",
+          "size": 1418
+        },
+        {
+          "path": "boiii/data/scripts/zm/aats/_zm_aat_dead_wire.gsh",
+          "md5": "691f5f884cf09040397b09d9c21ea08f",
+          "size": 998
+        },
+        {
+          "path": "boiii/data/scripts/zm/aats/_zm_aat_fire_works.gsh",
+          "md5": "a36aa975046116b9b909f9bf05e0519c",
+          "size": 1117
+        },
+        {
+          "path": "boiii/data/scripts/zm/aats/_zm_aat_thunder_wall.gsh",
+          "md5": "50e4bee02a47b518c8be64ef3f09e50e",
+          "size": 1234
+        },
+        {
+          "path": "boiii/data/scripts/zm/aats/_zm_aat_turned.gsh",
+          "md5": "3ea5c3626f554ed94585a305450c6b65",
+          "size": 1041
+        },
+        {
+          "path": "boiii/data/scripts/zm/archetype_genesis_keeper_companion.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/zm/archetype_zod_companion.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/scripts/zm/craftables/_zm_craftables.gsh",
+          "md5": "f453fe399a483f1a713183b5a2c7443b",
+          "size": 683
+        },
+        {
+          "path": "boiii/data/scripts/zm/zm.gsh",
+          "md5": "343359911348898550158539943c6f60",
+          "size": 305
+        },
+        {
+          "path": "boiii/data/scripts/zm/zm_tomb_giant_robot.gsh",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e",
+          "size": 0
+        },
+        {
+          "path": "boiii/data/ui_scripts/doubleclick_join_server/__init__.lua",
+          "md5": "4311f9a8bfaf2274cb0a62bf5ca7d5d1",
+          "size": 3718
+        },
+        {
+          "path": "boiii/data/ui_scripts/frontend_menus/__init__.lua",
+          "md5": "968f78ac47ab1732901def77464d4ecb",
+          "size": 6809
+        },
+        {
+          "path": "boiii/data/ui_scripts/frontend_menus/datasources_change_map_categories.lua",
+          "md5": "2d8ead3efd347dd204fc44271e63bf6f",
+          "size": 3946
+        },
+        {
+          "path": "boiii/data/ui_scripts/frontend_menus/datasources_gamesettingsflyout_buttons.lua",
+          "md5": "216474e752e85a7e0374cd928d67ad65",
+          "size": 9732
+        },
+        {
+          "path": "boiii/data/ui_scripts/frontend_menus/datasources_start_menu_tabs.lua",
+          "md5": "48bd1aa0b5f7a36484938017ae915856",
+          "size": 6507
+        },
+        {
+          "path": "boiii/data/ui_scripts/frontend_menus/utils.lua",
+          "md5": "cd8ae543394776c37712b1c104d80cbd",
+          "size": 4486
+        },
+        {
+          "path": "boiii/data/ui_scripts/graphics_settings/__init__.lua",
+          "md5": "08577e30bd72830b7681960890c033ee",
+          "size": 4880
+        },
+        {
+          "path": "boiii/data/ui_scripts/kick_menu/__init__.lua",
+          "md5": "5867f3bc583c36f873161aab2ee2029f",
+          "size": 3882
+        },
+        {
+          "path": "boiii/data/ui_scripts/lua_fixes/__init__.lua",
+          "md5": "401351b6f3506fc7786165854e28e7ac",
+          "size": 3272
+        },
+        {
+          "path": "boiii/data/ui_scripts/party/__init__.lua",
+          "md5": "010f8e614ba96eb074fca957d1833bfa",
+          "size": 2791
+        },
+        {
+          "path": "boiii/data/ui_scripts/party/datasources_start_menu_game_options.lua",
+          "md5": "2b10b2b996824d9d6ec2ba96332f8a8c",
+          "size": 7619
+        },
+        {
+          "path": "boiii/data/ui_scripts/playlist/__init__.lua",
+          "md5": "f1554c4cbd87c3e35d3e51519627d6b5",
+          "size": 962
+        },
+        {
+          "path": "boiii/data/ui_scripts/playlist/widget_playlist_category_match_settings_info.lua",
+          "md5": "3449e2d1fe5f5b3441ada16886423d04",
+          "size": 414
+        },
+        {
+          "path": "boiii/data/ui_scripts/playlist/widget_playlist_match_settings_info.lua",
+          "md5": "283491228502e7634abe22e081bb916f",
+          "size": 374
+        },
+        {
+          "path": "boiii/data/ui_scripts/prints/__init__.lua",
+          "md5": "ce02b1346618aa4e103505fe9ad09964",
+          "size": 3853
+        },
+        {
+          "path": "boiii/data/ui_scripts/quick_settings/__init__.lua",
+          "md5": "d23e0f287c58aaa140ebad981ef555d7",
+          "size": 9878
+        },
+        {
+          "path": "boiii/data/ui_scripts/ranked/__init__.lua",
+          "md5": "28246b8da76fa5be789bf78d41be2a5f",
+          "size": 30
+        },
+        {
+          "path": "boiii/data/ui_scripts/ranked/online_mods_loaded.lua",
+          "md5": "e65a1c28785d58e34a65818dd26e2913",
+          "size": 750
+        },
+        {
+          "path": "boiii/data/ui_scripts/scoreboard/__init__.lua",
+          "md5": "d1e2a10308159dcd569af7ab01343e02",
+          "size": 5692
+        },
+        {
+          "path": "boiii/data/ui_scripts/server_browser/__init__.lua",
+          "md5": "eaddb6da637f1bce5cdcb273fb1386c1",
+          "size": 41142
+        },
+        {
+          "path": "boiii/data/ui_scripts/server_password/__init__.lua",
+          "md5": "d3690c88daa2d48120fb166b0670179d",
+          "size": 3777
+        },
+        {
+          "path": "boiii/data/ui_scripts/social_friends/__init__.lua",
+          "md5": "372fa777df0c52aaec1e8830f313d801",
+          "size": 10672
+        },
+        {
+          "path": "boiii/data/ui_scripts/stats/__init__.lua",
+          "md5": "4b66852c246192de0ce810c48f74cb8c",
+          "size": 17482
+        },
+        {
+          "path": "boiii/data/ui_scripts/tweaks/__init__.lua",
+          "md5": "d772be881daffd3da744a86f855c0e15",
+          "size": 10452
+        },
+        {
+          "path": "boiii/user/game_path.txt",
+          "md5": "e5530d632ee3b16b588302f571035522",
+          "size": 21
+        },
+        {
+          "path": "boiii.exe",
+          "md5": "c1f7c8965a3a879c11ab0cb9fbb0e9c7",
+          "size": 5443584
+        },
+        {
+          "path": "boiii_players/plugins.log",
+          "md5": "c1f41d3c5a80be10e70ebe2f1704678a",
+          "size": 171
+        },
+        {
+          "path": "boiii_players/properties.json",
+          "md5": "b4d5a411eb71e903d45014e254814c92",
+          "size": 25
+        }
+      ]
+    },
+    {
+      "id": "s1-cll",
+      "name": "s1.exe",
+      "repo": "MestreTM/s1-cll",
+      "version": "v1.0.0",
+      "url": "https://github.com/MestreTM/s1-cll/releases/latest/download/s1.exe",
+      "md5": "c039d1699ec9acf4ced29f674c5460ab",
+      "size": 6744064
+    }
+  ]
+}
