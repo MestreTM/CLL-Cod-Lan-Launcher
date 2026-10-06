@@ -23,10 +23,10 @@
       "id": "t7-cll",
       "name": "t7_cll.zip",
       "repo": "MestreTM/t7-cll",
-      "version": "v1.0.0",
+      "version": "v3.0.0",
       "url": "https://github.com/MestreTM/t7-cll/releases/latest/download/t7_cll.zip",
-      "hash": "9ffb0062fde7bab91b1d88ccf5d2a35c77edb1c2",
-      "size": 6302923,
+      "hash": "4e88dfe5aad6a94e860be5bb89ba0eb73dfdeeb3",
+      "size": 6677546,
       "files": [
         {
           "path": "boiii/data/gamesettings/mp/gamesettings_escort.cfg",
@@ -55,7 +55,7 @@
         },
         {
           "path": "boiii/data/launcher/verification.json",
-          "hash": "459f4d47ca6c839c6852cf322905daf5e7cefaed",
+          "hash": "16f9fbd38c40bfc62103fca7c27563814227bbd3",
           "size": 134912
         },
         {
@@ -140,8 +140,8 @@
         },
         {
           "path": "boiii/data/scripts/mp/bots/_bot.gsc",
-          "hash": "10e0b569788efd2bd25bd89349b3c9e553493e54",
-          "size": 20659
+          "hash": "1dc3f22cf5210784a10a7ef0dbb20190e04febf3",
+          "size": 20787
         },
         {
           "path": "boiii/data/scripts/mp/bots/_bot.gsh",
@@ -150,8 +150,8 @@
         },
         {
           "path": "boiii/data/scripts/mp/bots/_bot_loadout.gsc",
-          "hash": "746a13d197f6fd3b6bc9561c4d3f1b1b66994119",
-          "size": 19931
+          "hash": "c62fe9af2f4e1a5779c2576bd3d8f636a34f0c59",
+          "size": 20202
         },
         {
           "path": "boiii/data/scripts/mp/gametypes/_globallogic.gsh",
@@ -210,13 +210,8 @@
         },
         {
           "path": "boiii/data/scripts/mp/teams/_teams.gsc",
-          "hash": "e94cc290695d6cd359ebedd5e4036beb33c2bece",
-          "size": 12284
-        },
-        {
-          "path": "boiii/data/scripts/mp/teams/_teams.gsc_raw",
-          "hash": "7e679d04d532854f731a428d4c93015d0c5e31ed",
-          "size": 14490
+          "hash": "70a8d5d200bea3767840319db90150a487a6509d",
+          "size": 14516
         },
         {
           "path": "boiii/data/scripts/shared/aat_shared.gsh",
@@ -800,8 +795,8 @@
         },
         {
           "path": "boiii/data/ui_scripts/frontend_menus/__init__.lua",
-          "hash": "8be57a8b8710de78d52a0e0c0146b983af7857a9",
-          "size": 6809
+          "hash": "f330fccbe116518849f62dde40d36b983e0694a3",
+          "size": 9012
         },
         {
           "path": "boiii/data/ui_scripts/frontend_menus/datasources_change_map_categories.lua",
@@ -824,6 +819,11 @@
           "size": 4486
         },
         {
+          "path": "boiii/data/ui_scripts/gobblegum_reset/__init__.lua",
+          "hash": "c92cfaf5a42b1d7d7c454633dbcab5f8edc691f3",
+          "size": 4095
+        },
+        {
           "path": "boiii/data/ui_scripts/graphics_settings/__init__.lua",
           "hash": "88010a3e387cd579988f1bbf406efdbc617c3f81",
           "size": 4880
@@ -834,9 +834,19 @@
           "size": 3882
         },
         {
+          "path": "boiii/data/ui_scripts/local_store/__init__.lua",
+          "hash": "554741312ba1bf048e0cc05c5cdd6757010895e8",
+          "size": 12315
+        },
+        {
           "path": "boiii/data/ui_scripts/lua_fixes/__init__.lua",
-          "hash": "10876e91af28fb1c6f953da7be98cb85b8a58e4b",
-          "size": 3272
+          "hash": "a50f97f4d3f48a1541374815dbc128c2fe6cb526",
+          "size": 3893
+        },
+        {
+          "path": "boiii/data/ui_scripts/online_player_count/__init__.lua",
+          "hash": "bdebac8894294ae62e1200124e0aadf6675a4a61",
+          "size": 3070
         },
         {
           "path": "boiii/data/ui_scripts/party/__init__.lua",
@@ -845,8 +855,8 @@
         },
         {
           "path": "boiii/data/ui_scripts/party/datasources_start_menu_game_options.lua",
-          "hash": "cd545e3119b25a6b7812cb6e4b62f8f15eae9d34",
-          "size": 7619
+          "hash": "9f2472d616f5931de64a21b5d015a396c29ea0a2",
+          "size": 7430
         },
         {
           "path": "boiii/data/ui_scripts/playlist/__init__.lua",
@@ -905,13 +915,28 @@
         },
         {
           "path": "boiii/data/ui_scripts/stats/__init__.lua",
-          "hash": "cc25549da0444734e8a551a6d79a772414adc098",
-          "size": 17482
+          "hash": "906a4e3576224089e69177af30ab558a19ad755b",
+          "size": 22275
+        },
+        {
+          "path": "boiii/data/ui_scripts/store_workshop/__init__.lua",
+          "hash": "9b3f09414cac7b9758bbe0d1398157c396cc2006",
+          "size": 1853
         },
         {
           "path": "boiii/data/ui_scripts/tweaks/__init__.lua",
           "hash": "adcd3e6840df0936cbdac934881c3dc403c8be91",
           "size": 10452
+        },
+        {
+          "path": "boiii/data/ui_scripts/workshop_menu/__init__.lua",
+          "hash": "09fcf229067c28d204460754a33a6150f3250ea7",
+          "size": 61591
+        },
+        {
+          "path": "boiii/data/ui_scripts/workshop_menu/loadingworkshop.png",
+          "hash": "b2c3f3ca9154266c7d126b2b34c089ef12d9220d",
+          "size": 6393
         },
         {
           "path": "boiii/user/game_path.txt",
@@ -920,8 +945,8 @@
         },
         {
           "path": "boiii.exe",
-          "hash": "6e6de0a8aab9802ee6ef0234327bf18e8a948ec8",
-          "size": 5443584
+          "hash": "dbc9f7e8c07a2fe15fa6a73d4f93806506ab5447",
+          "size": 6379008
         },
         {
           "path": "boiii_players/plugins.log",
@@ -948,9 +973,9 @@
       "id": "boiii-community",
       "name": "boiii.exe",
       "repo": "boiii-community/BOIII-Community",
-      "url": "https://gitlab.com/-/project/79668473/uploads/4874c51ec010798df5d7540f29bf36b8/boiii.exe",
-      "hash": "a14cf30c70817e133092e5236fea34ed21e0fd86",
-      "size": 3543040
+      "url": "https://gitlab.com/-/project/79668473/uploads/ecaba483d1a34db698f4185dc7ef730d/boiii.exe",
+      "hash": "90df03fc588d1191a9cec5297303e00f28d759a9",
+      "size": 3565568
     }
   ]
 }
